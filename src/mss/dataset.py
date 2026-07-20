@@ -87,11 +87,24 @@ class ManifestDataset(Dataset):
 
 def build_loaders(manifests, output_targets, target_level, sr=22050,
                   crop_seconds=1.5, batch_size=4, samples_per_epoch=256):
+    """Single-corpus mode: split crops by TIME region within the same pieces."""
     common = dict(output_targets=output_targets, target_level=target_level, sr=sr,
                   crop_seconds=crop_seconds)
     train = ManifestDataset(manifests, samples_per_epoch=samples_per_epoch,
                             region=(0.0, 0.7), **common)
     valid = ManifestDataset(manifests, samples_per_epoch=max(samples_per_epoch // 4, 8),
                             region=(0.7, 1.0), **common)
+    return (DataLoader(train, batch_size=batch_size, shuffle=True),
+            DataLoader(valid, batch_size=batch_size, shuffle=False))
+
+
+def build_split_loaders(train_manifests, valid_manifests, output_targets, target_level,
+                        sr=22050, crop_seconds=1.5, batch_size=4, samples_per_epoch=256):
+    """Corpus mode: DISTINCT pieces for train vs valid (song-level split, full region)."""
+    common = dict(output_targets=output_targets, target_level=target_level, sr=sr,
+                  crop_seconds=crop_seconds, region=(0.0, 1.0))
+    train = ManifestDataset(train_manifests, samples_per_epoch=samples_per_epoch, **common)
+    valid = ManifestDataset(valid_manifests,
+                            samples_per_epoch=max(samples_per_epoch // 4, 8), **common)
     return (DataLoader(train, batch_size=batch_size, shuffle=True),
             DataLoader(valid, batch_size=batch_size, shuffle=False))

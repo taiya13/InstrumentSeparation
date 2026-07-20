@@ -9,9 +9,10 @@ Swapping models is a one-line change: `model.name: mel_band_roformer` (or htdemu
 import argparse
 import yaml
 
+import json
 import mss.backbones  # noqa: F401  (populates the registry)
 from mss.registry import get_backbone, available
-from mss.dataset import build_loaders, resolve_output_targets
+from mss.dataset import build_loaders, build_split_loaders, resolve_output_targets
 
 
 def main():
@@ -26,7 +27,19 @@ def main():
     mono = cfg.get("mono", True)
     target_level = d["target_level"]
 
-    output_targets = resolve_output_targets(d["manifests"], target_level)
+    # Corpus mode (distinct pieces) if a splits file / explicit lists are given;
+    # otherwise single-corpus time-region split.
+    if "splits" in d:
+        sp = json.load(open(d["splits"]))
+        train_manifests, valid_manifests = sp["train"], sp["valid"]
+    elif "train_manifests" in d:
+        train_manifests, valid_manifests = d["train_manifests"], d["valid_manifests"]
+    else:
+        train_manifests = valid_manifests = None
+
+    all_manifests = (train_manifests + valid_manifests) if train_manifests \
+        else d["manifests"]
+    output_targets = resolve_output_targets(all_manifests, target_level)
     print(f"backbones available: {available()}")
     print(f"target_level={target_level}  output_targets={output_targets}")
 
@@ -35,10 +48,15 @@ def main():
     backbone = get_backbone(m["name"]).build(model_cfg)
     print(f"model '{m['name']}'  params={backbone.num_params()/1e6:.3f}M")
 
-    train_loader, valid_loader = build_loaders(
-        d["manifests"], output_targets, target_level, sr=d["sr"],
-        crop_seconds=d.get("crop_seconds", 1.5), batch_size=d.get("batch_size", 4),
-        samples_per_epoch=d.get("samples_per_epoch", 256))
+    kw = dict(sr=d["sr"], crop_seconds=d.get("crop_seconds", 1.5),
+              batch_size=d.get("batch_size", 4),
+              samples_per_epoch=d.get("samples_per_epoch", 256))
+    if train_manifests:
+        train_loader, valid_loader = build_split_loaders(
+            train_manifests, valid_manifests, output_targets, target_level, **kw)
+    else:
+        train_loader, valid_loader = build_loaders(
+            d["manifests"], output_targets, target_level, **kw)
 
     steps = a.steps if a.steps is not None else t["steps"]
     backbone.train(train_loader, valid_loader, steps=steps, lr=t.get("lr", 1e-3),

@@ -1,0 +1,47 @@
+{
+  "sr": 22050,
+  "bpm": 112,
+  "n_chords": 8,
+  "duration_sec": 8.571428571428571,
+  "instruments": [
+    "violin1",
+    "violin2",
+    "viola",
+    "cello",
+    "bass",
+    "flute",
+    "oboe",
+    "clarinet",
+    "bassoon",
+    "horn",
+    "trumpet",
+    "timpani"
+  ],
+  "families": {
+    "strings": [
+      "violin1",
+      "violin2",
+      "viola",
+      "cello",
+      "bass"
+    ],
+    "woodwinds": [
+      "flute",
+      "oboe",
+      "clarinet",
+      "bassoon"
+    ],
+    "brass": [
+      "horn",
+      "trumpet"
+    ],
+    "percussion": [
+      "timpani"
+    ]
+  },
+  "transpose": 7,
+  "drop": [
+    "trombone"
+  ],
+  "seed": 108
+}

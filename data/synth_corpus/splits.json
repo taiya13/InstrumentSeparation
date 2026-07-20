@@ -1,0 +1,20 @@
+{
+  "train": [
+    "data/synth_corpus/piece_00/manifest.json",
+    "data/synth_corpus/piece_01/manifest.json",
+    "data/synth_corpus/piece_02/manifest.json",
+    "data/synth_corpus/piece_03/manifest.json",
+    "data/synth_corpus/piece_04/manifest.json",
+    "data/synth_corpus/piece_05/manifest.json",
+    "data/synth_corpus/piece_06/manifest.json",
+    "data/synth_corpus/piece_07/manifest.json"
+  ],
+  "valid": [
+    "data/synth_corpus/piece_08/manifest.json",
+    "data/synth_corpus/piece_09/manifest.json"
+  ],
+  "test": [
+    "data/synth_corpus/piece_10/manifest.json",
+    "data/synth_corpus/piece_11/manifest.json"
+  ]
+}

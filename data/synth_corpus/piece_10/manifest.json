@@ -1,0 +1,113 @@
+{
+  "song_id": "corpus_10",
+  "dataset": "synth_corpus",
+  "split": "test",
+  "source_type": "synthetic",
+  "sample_rate": 22050,
+  "duration_sec": 10.11,
+  "mixture": "data/synth_corpus/piece_10/mixture.wav",
+  "mixture_stereo": "data/synth_corpus/piece_10/mixture_stereo.wav",
+  "present_ids": [
+    "str.cb",
+    "ww.bn",
+    "str.vlc",
+    "ww.cl",
+    "ww.fl",
+    "br.hn",
+    "ww.ob",
+    "perc.timp",
+    "br.tbn",
+    "br.tpt",
+    "str.vla",
+    "str.vln.1",
+    "str.vln.2"
+  ],
+  "sources": [
+    {
+      "taxonomy_id": "str.cb",
+      "dataset_label": "bass",
+      "stem": "data/synth_corpus/piece_10/stem_bass.wav",
+      "level": "instrument"
+    },
+    {
+      "taxonomy_id": "ww.bn",
+      "dataset_label": "bassoon",
+      "stem": "data/synth_corpus/piece_10/stem_bassoon.wav",
+      "level": "instrument"
+    },
+    {
+      "taxonomy_id": "str.vlc",
+      "dataset_label": "cello",
+      "stem": "data/synth_corpus/piece_10/stem_cello.wav",
+      "level": "instrument"
+    },
+    {
+      "taxonomy_id": "ww.cl",
+      "dataset_label": "clarinet",
+      "stem": "data/synth_corpus/piece_10/stem_clarinet.wav",
+      "level": "instrument"
+    },
+    {
+      "taxonomy_id": "ww.fl",
+      "dataset_label": "flute",
+      "stem": "data/synth_corpus/piece_10/stem_flute.wav",
+      "level": "instrument"
+    },
+    {
+      "taxonomy_id": "br.hn",
+      "dataset_label": "horn",
+      "stem": "data/synth_corpus/piece_10/stem_horn.wav",
+      "level": "instrument"
+    },
+    {
+      "taxonomy_id": "ww.ob",
+      "dataset_label": "oboe",
+      "stem": "data/synth_corpus/piece_10/stem_oboe.wav",
+      "level": "instrument"
+    },
+    {
+      "taxonomy_id": "perc.timp",
+      "dataset_label": "timpani",
+      "stem": "data/synth_corpus/piece_10/stem_timpani.wav",
+      "level": "instrument"
+    },
+    {
+      "taxonomy_id": "br.tbn",
+      "dataset_label": "trombone",
+      "stem": "data/synth_corpus/piece_10/stem_trombone.wav",
+      "level": "instrument"
+    },
+    {
+      "taxonomy_id": "br.tpt",
+      "dataset_label": "trumpet",
+      "stem": "data/synth_corpus/piece_10/stem_trumpet.wav",
+      "level": "instrument"
+    },
+    {
+      "taxonomy_id": "str.vla",
+      "dataset_label": "viola",
+      "stem": "data/synth_corpus/piece_10/stem_viola.wav",
+      "level": "instrument"
+    },
+    {
+      "taxonomy_id": "str.vln.1",
+      "dataset_label": "violin1",
+      "stem": "data/synth_corpus/piece_10/stem_violin1.wav",
+      "level": "part"
+    },
+    {
+      "taxonomy_id": "str.vln.2",
+      "dataset_label": "violin2",
+      "stem": "data/synth_corpus/piece_10/stem_violin2.wav",
+      "level": "part"
+    }
+  ],
+  "provenance": {
+    "renderer": "numpy_additive_synth",
+    "midi_source": "progression",
+    "augmentations": [
+      "transpose=4",
+      "bpm=95"
+    ]
+  }
+}

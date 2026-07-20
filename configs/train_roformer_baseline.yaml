@@ -1,0 +1,34 @@
+# In-environment BASELINE: real Mel-Band RoFormer, REDUCED config (CPU-feasible),
+# trained on the distinct-piece synthetic corpus (song-level train/valid/test split).
+# This is NOT the paper-scale config (see train_roformer_musdb_paper.yaml) — it exists to
+# establish an honest, reproducible baseline in a no-GPU environment. No custom model
+# modifications (uses bs_roformer + its native loss).
+device: cpu
+mono: true
+
+model:
+  name: mel_band_roformer
+  dim: 48
+  depth: 2
+  heads: 4
+  dim_head: 16
+  num_bands: 24
+  n_fft: 1024
+  win_length: 1024
+  hop: 256
+
+data:
+  splits: data/synth_corpus/splits.json   # corpus mode -> distinct train/valid pieces
+  target_level: category                  # [str, ww, br, perc]
+  sr: 22050
+  crop_seconds: 1.0
+  batch_size: 2
+  samples_per_epoch: 200
+
+train:
+  steps: 400
+  lr: 0.0007
+  ckpt_dir: checkpoints/roformer_baseline_category
+  ckpt_every: 100
+  valid_every: 100
+  log_every: 50

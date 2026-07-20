@@ -186,17 +186,36 @@ def render_timpani(spec, total_n, chord_n):
     return out
 
 
-def main(outdir="data/synth_orchestra"):
+def _transpose_spec(spec, semis):
+    s = {k: (v[:] if isinstance(v, list) else v) for k, v in spec.items()}
+    if "notes" in s:
+        s["notes"] = [(n + semis if n else 0) for n in s["notes"]]
+    if "hits" in s:
+        s["hits"] = [(n + semis if n else 0) for n in s["hits"]]
+    return s
+
+
+def generate_piece(outdir="data/synth_orchestra", transpose=0, bpm=BPM, seed=SEED,
+                   drop=()):
+    """Generate one piece. `transpose` (semitones), `bpm`, `seed`, and `drop` (set of
+    instrument keys to omit -> variable instrumentation) create a distinct piece so a
+    corpus of non-overlapping train/valid/test pieces can be built."""
+    global rng
+    rng = np.random.default_rng(seed)
     os.makedirs(outdir, exist_ok=True)
-    beat_sec = 60.0 / BPM
+    beat_sec = 60.0 / bpm
     chord_sec = beat_sec * BEATS_PER_CHORD
     chord_n = int(chord_sec * SR)
     total_n = chord_n * N_CHORDS
 
+    score = {k: _transpose_spec(v, transpose) for k, v in SCORE.items() if k not in drop}
+    perc = {k: _transpose_spec(v, transpose) for k, v in PERC.items() if k not in drop}
+
     stems = {}
-    for name, spec in SCORE.items():
+    for name, spec in score.items():
         stems[name] = render_instrument(spec, total_n, chord_n)
-    stems["timpani"] = render_timpani(PERC["timpani"], total_n, chord_n)
+    for name, spec in perc.items():
+        stems[name] = render_timpani(spec, total_n, chord_n)
 
     # per-instrument loudness balance (roughly orchestral)
     gains = {
@@ -220,7 +239,7 @@ def main(outdir="data/synth_orchestra"):
     sf.write(os.path.join(outdir, "mixture.wav"), mix.astype(np.float32), SR)
 
     # stereo mixture (with panning) -> for future neural models & the spatial-cue point
-    all_specs = {**{k: SCORE[k] for k in SCORE}, "timpani": PERC["timpani"]}
+    all_specs = {**score, **perc}
     L = np.zeros(total_n); R = np.zeros(total_n)
     for k, s in stems.items():
         pan = all_specs[k].get("pan", 0.0)          # -1 left .. +1 right
@@ -230,22 +249,28 @@ def main(outdir="data/synth_orchestra"):
     st = st / (np.max(np.abs(st)) + 1e-9) * 0.9
     sf.write(os.path.join(outdir, "mixture_stereo.wav"), st.astype(np.float32), SR)
 
-    # family stems (sum of members)
+    # family stems (sum of present members)
+    present_families = {}
     for fam, members in FAMILIES.items():
-        fs = np.sum([stems[m] for m in members], axis=0)
+        present = [m for m in members if m in stems]
+        if not present:
+            continue
+        present_families[fam] = present
+        fs = np.sum([stems[m] for m in present], axis=0)
         sf.write(os.path.join(outdir, f"family_{fam}.wav"), fs.astype(np.float32), SR)
 
-    meta = dict(sr=SR, bpm=BPM, n_chords=N_CHORDS, duration_sec=total_n / SR,
-                instruments=list(stems.keys()), families=FAMILIES,
-                diagnostic_pairs=dict(
-                    same_timbre_diff_line=["violin1", "violin2"],
-                    same_pitch_diff_timbre=["violin1", "flute"]),
-                seed=SEED)
+    meta = dict(sr=SR, bpm=bpm, n_chords=N_CHORDS, duration_sec=total_n / SR,
+                instruments=list(stems.keys()), families=present_families,
+                transpose=transpose, drop=list(drop), seed=seed)
     with open(os.path.join(outdir, "meta.json"), "w") as f:
         json.dump(meta, f, indent=2, ensure_ascii=False)
     print(f"Wrote {len(stems)} stems + mixture(s) to {outdir} "
-          f"({total_n/SR:.1f}s @ {SR} Hz)")
+          f"({total_n/SR:.1f}s @ {SR} Hz, transpose={transpose}, bpm={bpm}, drop={list(drop)})")
     return outdir
+
+
+def main(outdir="data/synth_orchestra"):
+    return generate_piece(outdir)
 
 
 if __name__ == "__main__":

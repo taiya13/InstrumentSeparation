@@ -1,0 +1,42 @@
+# TIER: >=48 GB VRAM (e.g. RTX A6000 / A100 40-80GB). Full paper-scale arch.
+# Data: SynthSOD (orchestra); switch splits to MUSDB for the paper sanity metric.
+# For multi-GPU, launch via scripts/launch_distributed.sh (torchrun) — the trainer is
+# DDP-aware (rank-gated logging/checkpoint, DDP-unwrapped checkpoints).
+device: cuda
+mono: false
+
+model:
+  name: mel_band_roformer
+  dim: 384
+  depth: 12
+  heads: 8
+  dim_head: 64
+  num_bands: 60
+  n_fft: 2048
+  win_length: 2048
+  hop: 441
+
+data:
+  splits: data/synthsod/splits.json
+  target_level: category
+  sr: 44100
+  crop_seconds: 8.0
+  batch_size: 4
+  samples_per_epoch: 200000
+
+train:
+  steps: 500000
+  lr: 0.0003
+  ckpt_dir: checkpoints/prod_48gb
+  ckpt_every: 5000
+  valid_every: 5000
+  log_every: 100
+  optimizer: adamw
+  weight_decay: 0.01
+  scheduler: cosine
+  warmup: 10000
+  grad_accum: 2
+  grad_clip: 0.5
+  amp: true
+  amp_dtype: bf16
+  grad_checkpointing: false

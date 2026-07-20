@@ -1,0 +1,40 @@
+# TIER: small / CPU smoke. Runs on the synthetic corpus (no GPU, no downloads).
+# Selected automatically when no CUDA GPU is present. Used to validate the whole
+# automated pipeline before moving to a GPU box.
+device: cpu
+mono: true
+
+model:
+  name: mel_band_roformer
+  dim: 48
+  depth: 2
+  heads: 4
+  dim_head: 16
+  num_bands: 24
+  n_fft: 1024
+  win_length: 1024
+  hop: 256
+
+data:
+  splits: data/synth_corpus/splits.json
+  target_level: category
+  sr: 22050
+  crop_seconds: 1.0
+  batch_size: 2
+  samples_per_epoch: 60
+
+train:
+  steps: 30
+  lr: 0.0007
+  ckpt_dir: checkpoints/prod_small
+  ckpt_every: 15
+  valid_every: 15
+  log_every: 10
+  optimizer: adamw
+  weight_decay: 0.01
+  scheduler: cosine
+  warmup: 5
+  grad_accum: 2
+  grad_clip: 0.5
+  amp: false            # CPU: keep fp32 (bf16 autocast works but adds no benefit here)
+  grad_checkpointing: false

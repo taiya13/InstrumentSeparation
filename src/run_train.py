@@ -44,7 +44,8 @@ def main():
     print(f"target_level={target_level}  output_targets={output_targets}")
 
     model_cfg = {**m, "output_targets": output_targets, "sr": d["sr"],
-                 "mono": mono, "device": cfg.get("device", "cpu")}
+                 "mono": mono, "device": cfg.get("device", "cpu"),
+                 "grad_checkpointing": t.get("grad_checkpointing", False)}
     backbone = get_backbone(m["name"]).build(model_cfg)
     print(f"model '{m['name']}'  params={backbone.num_params()/1e6:.3f}M")
 
@@ -62,7 +63,12 @@ def main():
     backbone.train(train_loader, valid_loader, steps=steps, lr=t.get("lr", 1e-3),
                    ckpt_dir=t["ckpt_dir"], ckpt_every=t.get("ckpt_every", 100),
                    valid_every=t.get("valid_every", 100),
-                   log_every=t.get("log_every", 20), resume=a.resume)
+                   log_every=t.get("log_every", 20), resume=a.resume,
+                   amp=t.get("amp", False), amp_dtype=t.get("amp_dtype", "auto"),
+                   grad_accum=t.get("grad_accum", 1), grad_clip=t.get("grad_clip", 0.0),
+                   optimizer=t.get("optimizer", "adam"),
+                   weight_decay=t.get("weight_decay", 0.0),
+                   scheduler=t.get("scheduler"), warmup=t.get("warmup", 0))
 
 
 if __name__ == "__main__":

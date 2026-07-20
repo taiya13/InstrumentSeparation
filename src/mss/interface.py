@@ -50,6 +50,9 @@ class SeparationBackbone:
         self.net = self._build(self.cfg)
         self.net.to(device)
         self._step = 0
+        if self.cfg.get("grad_checkpointing"):
+            ok = self.enable_grad_checkpointing()
+            print(f"[grad_checkpointing] {'enabled' if ok else 'not supported for this model'}")
 
     # ---- factory --------------------------------------------------------
     @classmethod
@@ -70,8 +73,41 @@ class SeparationBackbone:
         est, targets = _align(est, targets)
         return torch.mean(torch.abs(est - targets))
 
-    def configure_optimizer(self, lr=1e-3):
-        return torch.optim.Adam(self.net.parameters(), lr=lr)
+    def configure_optimizer(self, lr=1e-3, optimizer="adam", weight_decay=0.0,
+                            betas=(0.9, 0.999)):
+        params = self.net.parameters()
+        if optimizer == "adamw":
+            return torch.optim.AdamW(params, lr=lr, weight_decay=weight_decay, betas=betas)
+        return torch.optim.Adam(params, lr=lr, betas=betas)
+
+    def _make_scheduler(self, opt, name, steps, warmup):
+        if not name or name == "none":
+            return None
+        if name == "cosine":
+            import math
+            from torch.optim.lr_scheduler import LambdaLR
+            def fn(s):
+                if warmup and s < warmup:
+                    return (s + 1) / max(1, warmup)
+                p = (s - warmup) / max(1, steps - warmup)
+                return 0.5 * (1 + math.cos(math.pi * min(max(p, 0.0), 1.0)))
+            return LambdaLR(opt, fn)
+        return None
+
+    def enable_grad_checkpointing(self):
+        """Hook: subclasses enable gradient checkpointing to trade compute for VRAM."""
+        return False
+
+    def wrap_ddp(self, local_rank):
+        """Wrap the underlying net in DistributedDataParallel (call after dist.init)."""
+        from torch.nn.parallel import DistributedDataParallel as DDP
+        dev = [local_rank] if self.device.startswith("cuda") else None
+        self.net = DDP(self.net, device_ids=dev)
+        return self
+
+    def _core_net(self):
+        net = self.net
+        return net.module if hasattr(net, "module") else net
 
     # ---- API: infer -----------------------------------------------------
     def infer(self, mix):               # [B,C,T] -> [B,S,C,T]
@@ -79,48 +115,88 @@ class SeparationBackbone:
         with torch.no_grad():
             return self._forward(mix.to(self.device))
 
-    # ---- API: train (generic loop; checkpoint + resume) -----------------
+    # ---- API: train (generic loop; AMP + grad-accum + clip + sched + DDP) ----
     def train(self, train_loader, valid_loader=None, *, steps=200, lr=1e-3,
               ckpt_dir="checkpoints", ckpt_every=100, valid_every=100,
-              log_every=20, resume=None):
-        os.makedirs(ckpt_dir, exist_ok=True)
-        opt = self.configure_optimizer(lr)
+              log_every=20, resume=None, amp=False, amp_dtype="auto",
+              grad_accum=1, grad_clip=0.0, optimizer="adam", weight_decay=0.0,
+              scheduler=None, warmup=0, rank=0, on_valid=None, on_checkpoint=None):
+        if rank == 0:
+            os.makedirs(ckpt_dir, exist_ok=True)
+        opt = self.configure_optimizer(lr, optimizer=optimizer, weight_decay=weight_decay)
+        sched = self._make_scheduler(opt, scheduler, steps, warmup)
         start = 0
         if resume and os.path.exists(resume):
             meta = self.load_checkpoint(resume, optimizer=opt)
             start = meta.get("step", 0)
             print(f"[resume] from {resume} at step {start}")
+
+        # --- device-aware mixed precision ---
+        is_cuda = self.device.startswith("cuda")
+        amp_device = "cuda" if is_cuda else "cpu"
+        if amp_dtype == "auto":
+            dtype = torch.bfloat16 if (not is_cuda or torch.cuda.is_bf16_supported()) \
+                else torch.float16
+        else:
+            dtype = torch.bfloat16 if amp_dtype == "bf16" else torch.float16
+        use_scaler = amp and is_cuda and dtype == torch.float16
+        scaler = torch.amp.GradScaler(amp_device, enabled=use_scaler)
+
         history = []
         self.net.train()
         it = iter(train_loader)
+
+        def next_batch():
+            nonlocal it
+            try:
+                return next(it)
+            except StopIteration:
+                it = iter(train_loader)
+                return next(it)
+
         step = start
         t0 = time.time()
         while step < steps:
-            try:
-                batch = next(it)
-            except StopIteration:
-                it = iter(train_loader)
-                batch = next(it)
-            mix = batch["mixture"].to(self.device)
-            tgt = batch["targets"].to(self.device)
-            opt.zero_grad()
-            loss = self._loss(mix, tgt)
-            loss.backward()
-            opt.step()
+            opt.zero_grad(set_to_none=True)
+            last = 0.0
+            for _ in range(grad_accum):
+                batch = next_batch()
+                mix = batch["mixture"].to(self.device)
+                tgt = batch["targets"].to(self.device)
+                with torch.amp.autocast(amp_device, dtype=dtype, enabled=amp):
+                    loss = self._loss(mix, tgt) / grad_accum
+                scaler.scale(loss).backward()
+                last += loss.detach().item()
+            if grad_clip > 0:
+                scaler.unscale_(opt)
+                torch.nn.utils.clip_grad_norm_(self.net.parameters(), grad_clip)
+            scaler.step(opt)
+            scaler.update()
+            if sched is not None:
+                sched.step()
             step += 1
             self._step = step
-            if step % log_every == 0:
-                history.append({"step": step, "loss": round(loss.detach().item(), 5)})
-                print(f"  step {step:4d}/{steps}  loss={loss.detach().item():.5f}  "
+            if rank == 0 and step % log_every == 0:
+                history.append({"step": step, "loss": round(last, 5),
+                                "lr": opt.param_groups[0]["lr"]})
+                print(f"  step {step:4d}/{steps}  loss={last:.5f}  "
+                      f"lr={opt.param_groups[0]['lr']:.2e}  "
                       f"({(time.time()-t0)/max(step-start,1):.2f}s/step)")
-            if valid_loader is not None and step % valid_every == 0:
+            if valid_loader is not None and rank == 0 and step % valid_every == 0:
                 v = self.validate(valid_loader)
                 print(f"  [valid] step {step}: mean SI-SDR = {v:.2f} dB")
-            if step % ckpt_every == 0:
-                self.save_checkpoint(os.path.join(ckpt_dir, f"step{step}.pt"), opt, step)
+                if on_valid:
+                    on_valid(step, v)
+            if rank == 0 and step % ckpt_every == 0:
+                p = self.save_checkpoint(os.path.join(ckpt_dir, f"step{step}.pt"), opt, step)
+                if on_checkpoint:
+                    on_checkpoint(p, step)
         final = os.path.join(ckpt_dir, "final.pt")
-        self.save_checkpoint(final, opt, step)
-        print(f"[train] done. final checkpoint -> {final}")
+        if rank == 0:
+            self.save_checkpoint(final, opt, step)
+            if on_checkpoint:
+                on_checkpoint(final, step)
+            print(f"[train] done. final checkpoint -> {final}")
         return {"history": history, "final_checkpoint": final, "steps": step}
 
     def validate(self, valid_loader, max_batches=8):
@@ -170,14 +246,14 @@ class SeparationBackbone:
         torch.save({"name": self.name, "output_targets": self.output_targets,
                     "sr": self.sr, "mono": self.mono, "cfg": self.cfg,
                     "step": step if step is not None else self._step,
-                    "net": self.net.state_dict(),
+                    "net": self._core_net().state_dict(),   # unwrap DDP if present
                     "opt": optimizer.state_dict() if optimizer is not None else None,
                     "extra": extra}, path)
         return path
 
     def load_checkpoint(self, path, optimizer=None):
         ckpt = torch.load(path, map_location=self.device, weights_only=False)
-        self.net.load_state_dict(ckpt["net"])
+        self._core_net().load_state_dict(ckpt["net"])
         if optimizer is not None and ckpt.get("opt") is not None:
             optimizer.load_state_dict(ckpt["opt"])
         self._step = ckpt.get("step", 0)

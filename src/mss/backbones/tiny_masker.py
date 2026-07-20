@@ -18,6 +18,7 @@ class TinyMaskerNet(nn.Module):
     def __init__(self, n_stems, n_fft=1024, hop=256, hidden=32):
         super().__init__()
         self.n_fft, self.hop, self.n_stems = n_fft, hop, n_stems
+        self.use_checkpoint = False
         self.register_buffer("window", torch.hann_window(n_fft))
         self.net = nn.Sequential(
             nn.Conv2d(1, hidden, 3, padding=1), nn.ReLU(),
@@ -31,9 +32,15 @@ class TinyMaskerNet(nn.Module):
         spec = torch.stft(x, self.n_fft, self.hop, window=self.window,
                           return_complex=True)               # [B,F,Fr]
         mag = spec.abs().unsqueeze(1)                          # [B,1,F,Fr]
+        inp = torch.log1p(mag)
+        if self.use_checkpoint and inp.requires_grad:
+            from torch.utils.checkpoint import checkpoint
+            logits = checkpoint(self.net, inp, use_reentrant=False)
+        else:
+            logits = self.net(inp)
         # softmax over stems -> masks partition the mixture (sum to 1), a ratio-mask
         # inductive bias that guarantees the outputs re-sum to the input.
-        masks = torch.softmax(self.net(torch.log1p(mag)), dim=1)   # [B,S,F,Fr]
+        masks = torch.softmax(logits, dim=1)   # [B,S,F,Fr]
         ests = []
         for s in range(self.n_stems):
             est_spec = masks[:, s] * spec                     # [B,F,Fr] (real*complex)
@@ -53,4 +60,8 @@ class TinyMasker(SeparationBackbone):
 
     def _forward(self, mix):
         return self.net(mix)
+
+    def enable_grad_checkpointing(self):
+        self.net.use_checkpoint = True
+        return True
     # default _loss (L1 on waveform) is appropriate for a mixture-phase masker

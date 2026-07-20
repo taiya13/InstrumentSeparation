@@ -1,0 +1,43 @@
+# TIER: ~15 GB VRAM (e.g. RTX 4060 Ti 16GB / 3080 / 4070 Ti).
+# Real Mel-Band RoFormer, reduced arch + short segments + heavy grad-accum to fit.
+# Data: SynthSOD (orchestra). For the exact MUSDB paper metric, set
+#   data.splits: data/musdb18hq/splits.json   (note: MUSDB 'other' maps to __mixed__ and
+#   is dropped by the current taxonomy; add a temporary bucket if you need the 4th stem).
+device: cuda
+mono: false
+
+model:
+  name: mel_band_roformer
+  dim: 256
+  depth: 8
+  heads: 8
+  dim_head: 64
+  num_bands: 48
+  n_fft: 2048
+  win_length: 2048
+  hop: 441
+
+data:
+  splits: data/synthsod/splits.json
+  target_level: category            # str / ww / br / perc
+  sr: 44100
+  crop_seconds: 4.0                 # shorter segments => less VRAM
+  batch_size: 1
+  samples_per_epoch: 100000
+
+train:
+  steps: 200000
+  lr: 0.0003
+  ckpt_dir: checkpoints/prod_15gb
+  ckpt_every: 5000
+  valid_every: 5000
+  log_every: 100
+  optimizer: adamw
+  weight_decay: 0.01
+  scheduler: cosine
+  warmup: 4000
+  grad_accum: 8                     # effective batch ~8
+  grad_clip: 0.5
+  amp: true
+  amp_dtype: bf16                   # falls back to fp16 (+GradScaler) if bf16 unsupported
+  grad_checkpointing: false         # bs_roformer 1.2.4 does not expose it; use short segments

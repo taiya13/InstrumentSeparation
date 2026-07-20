@@ -14,6 +14,8 @@
   **共通 Backbone Interface**（`src/mss/`）で任意モデルを `train/infer/separate/export/checkpoint` の統一APIに統合。**Mel-Band RoFormer / HT-Demucs / tiny_masker** を1行で差し替え可能。`学習→推論→評価`が一貫動作するプラットフォーム。
 - **Phase 4（ベースライン再現・品質評価）** … `docs/Phase4_ベースライン性能レポート.md`
   実物 Mel-Band RoFormer を**無改造**で、train/valid/test を分離した合成コーパスで学習・評価（在環境ベースライン）。**論文スケール GPU config・資源見積り・データ取得/前処理**を完備。論文比較・ボトルネック分析・Phase5 優先順位。GPU/実データ CDN はサンドボックスでブロックのため論文スケール再現は GPU 箱で実施。
+- **Phase 5（GPU学習準備の完成）** … `docs/Phase5_GPU学習準備.md`
+  **GPU を挿した瞬間に本番学習が始まる**状態を GPU 無しで完成。CUDA自動判定・**AMP/勾配蓄積/勾配チェックポイント/AdamW+cosine/DDP**・VRAM別本番設定4種・**ワンコマンド自動化**（データ確認→学習→推論→評価→レポート）・**実験管理**（`runs/<id>/run.json`）。全機能を CPU で動作確認済み。
 
 ## PoC の再現（CPU のみ・完全オフライン）
 
@@ -38,6 +40,34 @@ Phase 3 の研究プラットフォーム（学習→推論→評価が一貫動
 pip install bs-roformer            # 実 Mel-Band RoFormer (MIT)
 bash scripts/run_platform_poc.sh   # train → resume → infer → evaluate → RoFormer smoke
 # モデル差し替えは configs/train.example.yaml の model.name を変更するだけ
+```
+
+## GPU 本番学習クイックスタート（Phase 5）
+
+**GPU を用意したら、これだけで本番学習〜評価〜レポートが走ります。**
+
+```bash
+# 1) 環境（GPU箱）
+python -m venv .venv && . .venv/bin/activate
+pip install -r environment/requirements-platform.txt     # GPUは先に CUDA版 torch を導入
+
+# 2) データ用意（自由ネットワーク環境で取得済みのものを変換）
+python src/prepare_datasets.py --dataset synthsod --root /data/synthsod --out data/synthsod
+
+# 3) GPU/VRAM/CUDA/Driver を確認し、適切な config を自動選択
+bash scripts/gpu_check.sh
+
+# 4) データ確認→学習→Validation→Checkpoint→Resume→推論→評価→レポート を一括
+bash scripts/train_gpu.sh                                  # 自動選択（VRAMで tier 決定）
+#   tier 指定 : bash scripts/train_gpu.sh configs/prod/roformer_24gb.yaml run24
+#   マルチGPU : bash scripts/launch_distributed.sh 4 configs/prod/roformer_48gb.yaml run48
+
+# 結果: runs/<id>/run.json + report.md（実験管理）, runs/<id>/infer/eval_*（評価）
+```
+
+GPU が無い環境でも同じコマンドで小規模 config が自動選択され、パイプライン全体を検証できます:
+```bash
+python src/run_pipeline.py --config configs/prod/roformer_small.yaml --name smoke
 ```
 
 ## 主要な発見（Phase 1）

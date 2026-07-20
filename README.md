@@ -12,6 +12,8 @@
   拡張可能な **Instrument Taxonomy**（`configs/taxonomy.yaml`）、曲別 **presence 検出**仕様、**マニフェスト駆動データ基盤**（`schemas/manifest.schema.json`）、**楽器別/カテゴリ別/曲別の評価基盤**（`src/evaluation.py`）、データセット整理表、Phase 3 実装一覧。すべて動作確認済み。
 - **Phase 3（AIバックボーン統合・学習基盤）** … `docs/Phase3_AIバックボーン統合_学習基盤.md`
   **共通 Backbone Interface**（`src/mss/`）で任意モデルを `train/infer/separate/export/checkpoint` の統一APIに統合。**Mel-Band RoFormer / HT-Demucs / tiny_masker** を1行で差し替え可能。`学習→推論→評価`が一貫動作するプラットフォーム。
+- **Phase 4（ベースライン再現・品質評価）** … `docs/Phase4_ベースライン性能レポート.md`
+  実物 Mel-Band RoFormer を**無改造**で、train/valid/test を分離した合成コーパスで学習・評価（在環境ベースライン）。**論文スケール GPU config・資源見積り・データ取得/前処理**を完備。論文比較・ボトルネック分析・Phase5 優先順位。GPU/実データ CDN はサンドボックスでブロックのため論文スケール再現は GPU 箱で実施。
 
 ## PoC の再現（CPU のみ・完全オフライン）
 

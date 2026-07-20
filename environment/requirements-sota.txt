@@ -1,0 +1,18 @@
+# Real SOTA reproduction — run on a machine with a GPU AND unrestricted network
+# (this project's sandbox blocks the model-weight CDNs: fbaipublicfiles, huggingface,
+#  download.pytorch.org, zenodo). See environment/README.md.
+#
+# --- Base model chosen for Phase 1: HT-Demucs (Demucs v4) ---
+demucs==4.0.1               # pulls torch; MIT; `demucs -n htdemucs_6s <file>`
+# --- Strategic backbone for Phase 2+: Band-Split / Mel-Band RoFormer ---
+# Use ZFTurbo's training/inference framework instead of a pip package:
+#   git clone https://github.com/ZFTurbo/Music-Source-Separation-Training
+#   pip install -r requirements.txt   (inside that repo)
+# It provides configs + pretrained checkpoints for bs_roformer / mel_band_roformer.
+#
+# --- Evaluation / data ---
+museval==0.4.1             # official SiSEC/MUSDB bss_eval (SDR/SIR/SAR)
+musdb==0.4.2               # MUSDB18 loader (benchmark reference)
+mir_eval==0.8.2
+soundfile
+librosa

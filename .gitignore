@@ -1,0 +1,14 @@
+# Python
+.venv/
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+
+# Large / downloaded artifacts (regenerate with scripts/run_poc.sh)
+separated/
+*.ckpt
+*.pth
+*.onnx
+
+# Keep: data/synth_orchestra (small, reproducible bench) and results/ (metrics + listenable examples)
+# are intentionally committed as Phase 1 deliverables.

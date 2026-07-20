@@ -1,0 +1,247 @@
+{
+  "sr": 22050,
+  "n_instruments": 13,
+  "oracle_irm_per_instrument": {
+    "bass": {
+      "si_sdr": 2.55,
+      "mixture_baseline": -11.09,
+      "si_sdri": 13.65
+    },
+    "bassoon": {
+      "si_sdr": -1.59,
+      "mixture_baseline": -11.18,
+      "si_sdri": 9.58
+    },
+    "cello": {
+      "si_sdr": -0.46,
+      "mixture_baseline": -11.84,
+      "si_sdri": 11.38
+    },
+    "clarinet": {
+      "si_sdr": 3.39,
+      "mixture_baseline": -9.33,
+      "si_sdri": 12.73
+    },
+    "flute": {
+      "si_sdr": 3.6,
+      "mixture_baseline": -7.92,
+      "si_sdri": 11.51
+    },
+    "horn": {
+      "si_sdr": 1.28,
+      "mixture_baseline": -10.32,
+      "si_sdri": 11.61
+    },
+    "oboe": {
+      "si_sdr": 3.49,
+      "mixture_baseline": -10.25,
+      "si_sdri": 13.75
+    },
+    "timpani": {
+      "si_sdr": 0.61,
+      "mixture_baseline": -20.57,
+      "si_sdri": 21.18
+    },
+    "trombone": {
+      "si_sdr": -0.1,
+      "mixture_baseline": -9.69,
+      "si_sdri": 9.59
+    },
+    "trumpet": {
+      "si_sdr": 5.47,
+      "mixture_baseline": -14.5,
+      "si_sdri": 19.97
+    },
+    "viola": {
+      "si_sdr": 1.17,
+      "mixture_baseline": -11.6,
+      "si_sdri": 12.77
+    },
+    "violin1": {
+      "si_sdr": 2.74,
+      "mixture_baseline": -9.13,
+      "si_sdri": 11.87
+    },
+    "violin2": {
+      "si_sdr": 2.58,
+      "mixture_baseline": -10.61,
+      "si_sdri": 13.19
+    }
+  },
+  "oracle_ibm_per_instrument": {
+    "bass": {
+      "si_sdr": 2.66,
+      "mixture_baseline": -11.09,
+      "si_sdri": 13.75
+    },
+    "bassoon": {
+      "si_sdr": -1.98,
+      "mixture_baseline": -11.18,
+      "si_sdri": 9.19
+    },
+    "cello": {
+      "si_sdr": -0.52,
+      "mixture_baseline": -11.84,
+      "si_sdri": 11.32
+    },
+    "clarinet": {
+      "si_sdr": 3.43,
+      "mixture_baseline": -9.33,
+      "si_sdri": 12.76
+    },
+    "flute": {
+      "si_sdr": 3.79,
+      "mixture_baseline": -7.92,
+      "si_sdri": 11.71
+    },
+    "horn": {
+      "si_sdr": 1.11,
+      "mixture_baseline": -10.32,
+      "si_sdri": 11.44
+    },
+    "oboe": {
+      "si_sdr": 3.7,
+      "mixture_baseline": -10.25,
+      "si_sdri": 13.96
+    },
+    "timpani": {
+      "si_sdr": -1.06,
+      "mixture_baseline": -20.57,
+      "si_sdri": 19.51
+    },
+    "trombone": {
+      "si_sdr": -1.47,
+      "mixture_baseline": -9.69,
+      "si_sdri": 8.22
+    },
+    "trumpet": {
+      "si_sdr": 5.91,
+      "mixture_baseline": -14.5,
+      "si_sdri": 20.41
+    },
+    "viola": {
+      "si_sdr": 1.22,
+      "mixture_baseline": -11.6,
+      "si_sdri": 12.82
+    },
+    "violin1": {
+      "si_sdr": 3.14,
+      "mixture_baseline": -9.13,
+      "si_sdri": 12.27
+    },
+    "violin2": {
+      "si_sdr": 2.79,
+      "mixture_baseline": -10.61,
+      "si_sdri": 13.4
+    }
+  },
+  "oracle_irm_per_family": {
+    "brass": {
+      "si_sdr": 4.75,
+      "mixture_baseline": -5.82,
+      "si_sdri": 10.58
+    },
+    "percussion": {
+      "si_sdr": 0.75,
+      "mixture_baseline": -20.57,
+      "si_sdri": 21.32
+    },
+    "strings": {
+      "si_sdr": 4.35,
+      "mixture_baseline": -2.01,
+      "si_sdri": 6.36
+    },
+    "woodwinds": {
+      "si_sdr": 5.38,
+      "mixture_baseline": -1.84,
+      "si_sdri": 7.22
+    }
+  },
+  "hpss_baseline": {
+    "timpani": {
+      "si_sdr": -23.99,
+      "mixture_baseline": -20.57,
+      "si_sdri": -3.42
+    }
+  },
+  "spectrogram_cosine_similarity": {
+    "bass|bassoon": 0.232,
+    "bass|cello": 0.408,
+    "bass|clarinet": 0.079,
+    "bass|flute": 0.015,
+    "bass|horn": 0.17,
+    "bass|oboe": 0.003,
+    "bass|timpani": 0.298,
+    "bass|trombone": 0.372,
+    "bass|trumpet": 0.006,
+    "bass|viola": 0.084,
+    "bass|violin1": 0.009,
+    "bass|violin2": 0.014,
+    "bassoon|cello": 0.423,
+    "bassoon|clarinet": 0.439,
+    "bassoon|flute": 0.203,
+    "bassoon|horn": 0.261,
+    "bassoon|oboe": 0.071,
+    "bassoon|timpani": 0.035,
+    "bassoon|trombone": 0.349,
+    "bassoon|trumpet": 0.045,
+    "bassoon|viola": 0.241,
+    "bassoon|violin1": 0.136,
+    "bassoon|violin2": 0.158,
+    "cello|clarinet": 0.19,
+    "cello|flute": 0.137,
+    "cello|horn": 0.237,
+    "cello|oboe": 0.058,
+    "cello|timpani": 0.096,
+    "cello|trombone": 0.464,
+    "cello|trumpet": 0.036,
+    "cello|viola": 0.147,
+    "cello|violin1": 0.09,
+    "cello|violin2": 0.112,
+    "clarinet|flute": 0.098,
+    "clarinet|horn": 0.036,
+    "clarinet|oboe": 0.105,
+    "clarinet|timpani": 0.005,
+    "clarinet|trombone": 0.162,
+    "clarinet|trumpet": 0.048,
+    "clarinet|viola": 0.186,
+    "clarinet|violin1": 0.116,
+    "clarinet|violin2": 0.122,
+    "flute|horn": 0.117,
+    "flute|oboe": 0.154,
+    "flute|timpani": 0.004,
+    "flute|trombone": 0.112,
+    "flute|trumpet": 0.055,
+    "flute|viola": 0.308,
+    "flute|violin1": 0.415,
+    "flute|violin2": 0.192,
+    "horn|oboe": 0.076,
+    "horn|timpani": 0.007,
+    "horn|trombone": 0.52,
+    "horn|trumpet": 0.119,
+    "horn|viola": 0.099,
+    "horn|violin1": 0.091,
+    "horn|violin2": 0.148,
+    "oboe|timpani": 0.007,
+    "oboe|trombone": 0.039,
+    "oboe|trumpet": 0.093,
+    "oboe|viola": 0.191,
+    "oboe|violin1": 0.274,
+    "oboe|violin2": 0.331,
+    "timpani|trombone": 0.114,
+    "timpani|trumpet": 0.006,
+    "timpani|viola": 0.005,
+    "timpani|violin1": 0.006,
+    "timpani|violin2": 0.006,
+    "trombone|trumpet": 0.038,
+    "trombone|viola": 0.139,
+    "trombone|violin1": 0.071,
+    "trombone|violin2": 0.105,
+    "trumpet|viola": 0.052,
+    "trumpet|violin1": 0.086,
+    "trumpet|violin2": 0.054,
+    "viola|violin1": 0.242,
+    "viola|violin2": 0.169,
+    "violin1|violin2": 0.177
+  }
+}

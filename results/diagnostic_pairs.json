@@ -1,0 +1,86 @@
+{
+  "1_unison_SAME_timbre": {
+    "per_source": {
+      "srcA": {
+        "si_sdr": 1.92,
+        "mixture_baseline": 1.66,
+        "si_sdri": 0.26
+      },
+      "srcB": {
+        "si_sdr": 2.66,
+        "mixture_baseline": 2.41,
+        "si_sdri": 0.25
+      }
+    },
+    "mean_si_sdri": 0.26,
+    "config": {
+      "instr_a": "violin",
+      "midi_a": 69,
+      "instr_b": "violin",
+      "midi_b": 69
+    }
+  },
+  "2_unison_DIFF_timbre": {
+    "per_source": {
+      "srcA": {
+        "si_sdr": 5.18,
+        "mixture_baseline": -2.43,
+        "si_sdri": 7.61
+      },
+      "srcB": {
+        "si_sdr": 7.94,
+        "mixture_baseline": 2.11,
+        "si_sdri": 5.84
+      }
+    },
+    "mean_si_sdri": 6.72,
+    "config": {
+      "instr_a": "violin",
+      "midi_a": 69,
+      "instr_b": "flute",
+      "midi_b": 69
+    }
+  },
+  "3_harmony_SAME_timbre": {
+    "per_source": {
+      "srcA": {
+        "si_sdr": 8.36,
+        "mixture_baseline": 1.9,
+        "si_sdri": 6.47
+      },
+      "srcB": {
+        "si_sdr": 5.97,
+        "mixture_baseline": -1.9,
+        "si_sdri": 7.87
+      }
+    },
+    "mean_si_sdri": 7.17,
+    "config": {
+      "instr_a": "violin",
+      "midi_a": 69,
+      "instr_b": "violin",
+      "midi_b": 72
+    }
+  },
+  "4_harmony_DIFF_timbre": {
+    "per_source": {
+      "srcA": {
+        "si_sdr": 6.38,
+        "mixture_baseline": -2.68,
+        "si_sdri": 9.06
+      },
+      "srcB": {
+        "si_sdr": 9.39,
+        "mixture_baseline": 2.45,
+        "si_sdri": 6.94
+      }
+    },
+    "mean_si_sdri": 8.0,
+    "config": {
+      "instr_a": "violin",
+      "midi_a": 69,
+      "instr_b": "flute",
+      "midi_b": 72
+    }
+  }
+}

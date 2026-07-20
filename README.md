@@ -10,6 +10,8 @@
   ベースモデル（HT-Demucs）選定、再現可能な環境構築、CPU 動作確認、**オラクル上限による到達可能品質の実測**、**同一楽器分離が原理的に不可能であることの定量実証**、ボトルネック分析。
 - **Phase 2（データ基盤・学習仕様設計）** … `docs/Phase2_データ基盤_学習仕様設計.md`
   拡張可能な **Instrument Taxonomy**（`configs/taxonomy.yaml`）、曲別 **presence 検出**仕様、**マニフェスト駆動データ基盤**（`schemas/manifest.schema.json`）、**楽器別/カテゴリ別/曲別の評価基盤**（`src/evaluation.py`）、データセット整理表、Phase 3 実装一覧。すべて動作確認済み。
+- **Phase 3（AIバックボーン統合・学習基盤）** … `docs/Phase3_AIバックボーン統合_学習基盤.md`
+  **共通 Backbone Interface**（`src/mss/`）で任意モデルを `train/infer/separate/export/checkpoint` の統一APIに統合。**Mel-Band RoFormer / HT-Demucs / tiny_masker** を1行で差し替え可能。`学習→推論→評価`が一貫動作するプラットフォーム。
 
 ## PoC の再現（CPU のみ・完全オフライン）
 
@@ -26,6 +28,14 @@ Phase 2 のデータ基盤・評価基盤の検証:
 ```bash
 pip install pyyaml jsonschema
 bash scripts/build_foundation.sh   # taxonomy検証 → manifest → presence → evaluation
+```
+
+Phase 3 の研究プラットフォーム（学習→推論→評価が一貫動作）:
+
+```bash
+pip install bs-roformer            # 実 Mel-Band RoFormer (MIT)
+bash scripts/run_platform_poc.sh   # train → resume → infer → evaluate → RoFormer smoke
+# モデル差し替えは configs/train.example.yaml の model.name を変更するだけ
 ```
 
 ## 主要な発見（Phase 1）

@@ -1,0 +1,31 @@
+# Same platform, different backbone — Mel-Band RoFormer (tiny CPU config for smoke-test).
+# On a GPU box, scale dim/depth/num_bands up to the real SOTA config.
+device: cpu
+mono: true
+
+model:
+  name: mel_band_roformer
+  dim: 32
+  depth: 1
+  heads: 2
+  dim_head: 16
+  num_bands: 16
+  n_fft: 512
+  win_length: 512
+  hop: 128
+
+data:
+  manifests: [data/synth_orchestra/manifest.json]
+  target_level: category
+  sr: 22050
+  crop_seconds: 1.0
+  batch_size: 2
+  samples_per_epoch: 16
+
+train:
+  steps: 6
+  lr: 0.001
+  ckpt_dir: checkpoints/roformer_category
+  ckpt_every: 6
+  valid_every: 100
+  log_every: 2

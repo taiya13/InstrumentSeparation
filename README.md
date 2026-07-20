@@ -8,6 +8,8 @@
   既存の音源分離AI・オーケストラ特化研究・データセットの徹底調査、比較表、推奨ベースモデル、ロードマップ、実現可能性評価。
 - **Phase 1（再現・評価 PoC）** … `docs/Phase1_再現評価レポート.md`
   ベースモデル（HT-Demucs）選定、再現可能な環境構築、CPU 動作確認、**オラクル上限による到達可能品質の実測**、**同一楽器分離が原理的に不可能であることの定量実証**、ボトルネック分析。
+- **Phase 2（データ基盤・学習仕様設計）** … `docs/Phase2_データ基盤_学習仕様設計.md`
+  拡張可能な **Instrument Taxonomy**（`configs/taxonomy.yaml`）、曲別 **presence 検出**仕様、**マニフェスト駆動データ基盤**（`schemas/manifest.schema.json`）、**楽器別/カテゴリ別/曲別の評価基盤**（`src/evaluation.py`）、データセット整理表、Phase 3 実装一覧。すべて動作確認済み。
 
 ## PoC の再現（CPU のみ・完全オフライン）
 
@@ -18,6 +20,13 @@ bash scripts/run_poc.sh
 ```
 
 生成物: `data/synth_orchestra/`（正解付き合成オケ）、`results/metrics.json`・`results/diagnostic_pairs.json`（実測メトリクス）、`results/estimates*/`（分離例の音声）。
+
+Phase 2 のデータ基盤・評価基盤の検証:
+
+```bash
+pip install pyyaml jsonschema
+bash scripts/build_foundation.sh   # taxonomy検証 → manifest → presence → evaluation
+```
 
 ## 主要な発見（Phase 1）
 

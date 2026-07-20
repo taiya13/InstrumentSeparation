@@ -1,0 +1,239 @@
+# =============================================================================
+# Orchestra Instrument Taxonomy  (extensible)
+# =============================================================================
+# Design goals
+#   - Hierarchical: category > family > instrument > part
+#   - EXTENSIBLE: add nodes without breaking existing ids (ids are stable, never
+#     renumbered/reused). New categories/instruments just append.
+#   - MULTI-LEVEL training/eval: a model may output at category, instrument, or
+#     part level; the hierarchy lets us roll any set of stems up/down.
+#   - UNIFIES heterogeneous datasets via `mappings` (GM program / SynthSOD / URMP / ...).
+#   - Encodes the HARD case: `same_timbre_groups` marks sources that share timbre
+#     (Violin I/II) and therefore CANNOT be split from mono audio (Phase 1 proved
+#     this: +0.26 dB oracle). Such groups require spatial or score-informed cues.
+#
+# ID rule: dot-separated, stable. e.g. str.vln (instrument), str.vln.1 (part).
+# =============================================================================
+version: "0.2.0"
+levels: [category, family, instrument, part]
+
+policy:
+  default_output_level: instrument     # separate at instrument level by default
+  fallback_level: category             # if per-instrument presence is uncertain
+  id_rule: "stable dot-separated ids; never reuse or renumber an existing id"
+  part_policy: >
+    'part' nodes (e.g. Violin I/II) are only separated when the pipeline has the
+    extra information they require (multichannel/spatial OR score). Otherwise the
+    system outputs the parent 'instrument' node (e.g. all violins together).
+
+categories:
+  # ------------------------------------------------------------------ STRINGS
+  - id: str
+    key: strings
+    name: {en: Strings, ja: 弦楽器}
+    families:
+      - id: str.bowed
+        key: bowed
+        instruments:
+          - id: str.vln
+            key: violin
+            name: {en: Violin, ja: ヴァイオリン}
+            midi_range: [55, 105]
+            gm_programs: [40]
+            same_timbre_group: g.violins
+            parts:
+              - {id: str.vln.1, key: violin_1, name: {en: "Violin I",  ja: 第1ヴァイオリン}, role: melody,  typical_pan: -0.4}
+              - {id: str.vln.2, key: violin_2, name: {en: "Violin II", ja: 第2ヴァイオリン}, role: harmony, typical_pan: -0.2}
+          - {id: str.vla, key: viola,      name: {en: Viola,      ja: ヴィオラ},     midi_range: [48, 91], gm_programs: [41], typical_pan: 0.0}
+          - {id: str.vlc, key: cello,      name: {en: Cello,      ja: チェロ},       midi_range: [36, 84], gm_programs: [42], typical_pan: 0.2}
+          - {id: str.cb,  key: contrabass, name: {en: Contrabass, ja: コントラバス}, midi_range: [28, 67], gm_programs: [43], typical_pan: 0.35}
+      - id: str.plucked
+        key: plucked
+        instruments:
+          - {id: str.harp, key: harp, name: {en: Harp, ja: ハープ}, midi_range: [24, 103], gm_programs: [46]}
+
+  # ---------------------------------------------------------------- WOODWINDS
+  - id: ww
+    key: woodwinds
+    name: {en: Woodwinds, ja: 木管楽器}
+    families:
+      - id: ww.flutes
+        key: flutes
+        instruments:
+          - {id: ww.picc, key: piccolo, name: {en: Piccolo, ja: ピッコロ}, midi_range: [74, 108], gm_programs: [72]}
+          - {id: ww.fl,   key: flute,   name: {en: Flute,   ja: フルート}, midi_range: [60, 96],  gm_programs: [73]}
+      - id: ww.doublereeds
+        key: double_reeds
+        instruments:
+          - {id: ww.ob,  key: oboe,          name: {en: Oboe,           ja: オーボエ},          midi_range: [58, 91], gm_programs: [68]}
+          - {id: ww.eh,  key: english_horn,  name: {en: "English Horn",  ja: イングリッシュホルン}, midi_range: [52, 83], gm_programs: [69]}
+          - {id: ww.bn,  key: bassoon,       name: {en: Bassoon,        ja: ファゴット},        midi_range: [34, 75], gm_programs: [70]}
+          - {id: ww.cbn, key: contrabassoon, name: {en: Contrabassoon,  ja: コントラファゴット},  midi_range: [22, 53], gm_programs: [70]}
+      - id: ww.singlereeds
+        key: single_reeds
+        instruments:
+          - {id: ww.cl,  key: clarinet,      name: {en: Clarinet,       ja: クラリネット},      midi_range: [50, 94], gm_programs: [71]}
+          - {id: ww.bcl, key: bass_clarinet, name: {en: "Bass Clarinet", ja: バスクラリネット},  midi_range: [38, 77], gm_programs: [71]}
+
+  # -------------------------------------------------------------------- BRASS
+  - id: br
+    key: brass
+    name: {en: Brass, ja: 金管楽器}
+    families:
+      - id: br.all
+        key: brass
+        instruments:
+          - {id: br.hn,   key: horn,          name: {en: "French Horn",   ja: ホルン},        midi_range: [34, 77], gm_programs: [60]}
+          - {id: br.tpt,  key: trumpet,       name: {en: Trumpet,         ja: トランペット},   midi_range: [54, 85], gm_programs: [56]}
+          - {id: br.tbn,  key: trombone,      name: {en: Trombone,        ja: トロンボーン},   midi_range: [40, 72], gm_programs: [57]}
+          - {id: br.btbn, key: bass_trombone, name: {en: "Bass Trombone", ja: バストロンボーン}, midi_range: [34, 65], gm_programs: [57]}
+          - {id: br.tba,  key: tuba,          name: {en: Tuba,            ja: チューバ},       midi_range: [28, 58], gm_programs: [58]}
+
+  # --------------------------------------------------------------- PERCUSSION
+  - id: perc
+    key: percussion
+    name: {en: Percussion, ja: 打楽器}
+    families:
+      - id: perc.pitched
+        key: pitched
+        instruments:
+          - {id: perc.timp,   key: timpani,       name: {en: Timpani,         ja: ティンパニ},     midi_range: [36, 60],  gm_programs: [47]}
+          - {id: perc.glock,  key: glockenspiel,  name: {en: Glockenspiel,    ja: グロッケン},     midi_range: [79, 108], gm_programs: [9]}
+          - {id: perc.xyl,    key: xylophone,     name: {en: Xylophone,       ja: シロフォン},     midi_range: [65, 108], gm_programs: [13]}
+          - {id: perc.mar,    key: marimba,       name: {en: Marimba,         ja: マリンバ},       midi_range: [45, 96],  gm_programs: [12]}
+          - {id: perc.tbells, key: tubular_bells, name: {en: "Tubular Bells", ja: チューブラーベル}, midi_range: [60, 77],  gm_programs: [14]}
+      - id: perc.unpitched
+        key: unpitched
+        instruments:
+          - {id: perc.snare,  key: snare_drum, name: {en: "Snare Drum", ja: スネア}}
+          - {id: perc.bdrum,  key: bass_drum,  name: {en: "Bass Drum",  ja: 大太鼓}}
+          - {id: perc.cym,    key: cymbals,    name: {en: Cymbals,      ja: シンバル}}
+          - {id: perc.tri,    key: triangle,   name: {en: Triangle,     ja: トライアングル}}
+          - {id: perc.tamtam, key: tam_tam,    name: {en: "Tam-tam",    ja: タムタム}}
+
+  # ----------------------------------------------------------------- KEYBOARD
+  - id: key
+    key: keyboard
+    name: {en: Keyboard, ja: 鍵盤楽器}
+    families:
+      - id: key.all
+        key: keyboard
+        instruments:
+          - {id: key.piano,   key: piano,       name: {en: Piano,       ja: ピアノ},     midi_range: [21, 108], gm_programs: [0]}
+          - {id: key.celesta, key: celesta,     name: {en: Celesta,     ja: チェレスタ}, midi_range: [60, 108], gm_programs: [8]}
+          - {id: key.organ,   key: organ,       name: {en: Organ,       ja: オルガン},   midi_range: [24, 96],  gm_programs: [19]}
+          - {id: key.hpschd,  key: harpsichord, name: {en: Harpsichord, ja: チェンバロ}, midi_range: [29, 89],  gm_programs: [6]}
+
+  # ------------------------------------------------------------------- VOICES
+  - id: voice
+    key: voices
+    name: {en: Voices, ja: 声楽}
+    families:
+      - id: voice.solo
+        key: solo
+        instruments:
+          - {id: voice.sop,  key: soprano, name: {en: Soprano, ja: ソプラノ}, midi_range: [60, 84]}
+          - {id: voice.alto, key: alto,    name: {en: Alto,    ja: アルト},   midi_range: [53, 77]}
+          - {id: voice.ten,  key: tenor,   name: {en: Tenor,   ja: テノール}, midi_range: [48, 72]}
+          - {id: voice.bass, key: bass,    name: {en: Bass,    ja: バス},     midi_range: [40, 64]}
+      - id: voice.ensemble
+        key: ensemble
+        instruments:
+          - {id: voice.choir, key: choir, name: {en: Choir, ja: 合唱}, gm_programs: [52]}
+
+  # -------------------------------------------------------------------- OTHER
+  # Extensibility slot: non-core / crossover instruments. Append freely.
+  - id: other
+    key: other
+    name: {en: Other, ja: その他}
+    families:
+      - id: other.all
+        key: other
+        instruments:
+          - {id: other.sax_a,     key: alto_sax,  name: {en: "Alto Sax",  ja: アルトサックス}, midi_range: [49, 80], gm_programs: [65]}
+          - {id: other.sax_t,     key: tenor_sax, name: {en: "Tenor Sax", ja: テナーサックス}, midi_range: [44, 75], gm_programs: [66]}
+          - {id: other.guitar,    key: guitar,    name: {en: Guitar,      ja: ギター},        midi_range: [40, 84], gm_programs: [24]}
+          - {id: other.accordion, key: accordion, name: {en: Accordion,   ja: アコーディオン},  midi_range: [41, 89], gm_programs: [21]}
+
+# -----------------------------------------------------------------------------
+# Same-timbre groups: members share a timbre model -> mono mask separation is
+# near-impossible (Phase 1: +0.26 dB oracle). Splitting these REQUIRES extra
+# information (multichannel/spatial cues OR score-informed conditioning).
+# -----------------------------------------------------------------------------
+same_timbre_groups:
+  - id: g.violins
+    members: [str.vln.1, str.vln.2]
+    requires: [multichannel_or_spatial, score_informed]
+    note: "Violin I vs II — identical timbre; the project's hardest target."
+
+# -----------------------------------------------------------------------------
+# Dataset label mappings -> taxonomy ids. Lets us pool heterogeneous corpora.
+# (Extend as new datasets are added. '__mixed__' = not a single instrument.)
+# -----------------------------------------------------------------------------
+mappings:
+  gm_program:            # General MIDI program number (0-indexed) -> id
+    0: key.piano
+    6: key.hpschd
+    8: key.celesta
+    9: perc.glock
+    12: perc.mar
+    13: perc.xyl
+    14: perc.tbells
+    19: key.organ
+    40: str.vln
+    41: str.vla
+    42: str.vlc
+    43: str.cb
+    46: str.harp
+    47: perc.timp
+    52: voice.choir
+    56: br.tpt
+    57: br.tbn
+    58: br.tba
+    60: br.hn
+    65: other.sax_a
+    66: other.sax_t
+    68: ww.ob
+    69: ww.eh
+    70: ww.bn
+    71: ww.cl
+    72: ww.picc
+    73: ww.fl
+  synthsod_family:       # SynthSOD 4-family labels -> category ids
+    strings: str
+    woodwinds: ww
+    brass: br
+    percussion: perc
+  urmp:                  # URMP instrument codes -> id
+    vn: str.vln
+    va: str.vla
+    vc: str.vlc
+    db: str.cb
+    fl: ww.fl
+    ob: ww.ob
+    cl: ww.cl
+    bn: ww.bn
+    sax: other.sax_a
+    tpt: br.tpt
+    hn: br.hn
+    tbn: br.tbn
+    tba: br.tba
+  musdb:                 # MUSDB18 pop stems (non-orchestral; for sanity only)
+    vocals: voice
+    drums: perc.unpitched
+    bass: str.cb
+    other: __mixed__
+  synth_bench:           # our Phase 1 synthetic bench stem names -> id
+    violin1: str.vln.1
+    violin2: str.vln.2
+    viola: str.vla
+    cello: str.vlc
+    bass: str.cb
+    flute: ww.fl
+    oboe: ww.ob
+    clarinet: ww.cl
+    bassoon: ww.bn
+    horn: br.hn
+    trumpet: br.tpt
+    trombone: br.tbn
+    timpani: perc.timp

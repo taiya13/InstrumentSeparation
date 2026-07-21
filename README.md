@@ -19,7 +19,9 @@
 - **Phase 6 / Experiment 001（独自研究①：Score条件）** … `docs/Phase6_条件付き分離_研究レポート.md`
   単一仮説「**楽譜（score）条件で同一楽器（第1/第2ヴァイオリン）をモノ分離できるか**」を検証。**音声のみ 0 dB（不可能）→ 楽譜条件 +6.99 dB SI-SDR / +10.5 dB SIR**（オラクル上限の約6割）で**仮説を支持**。`python src/run_phase6_analytic.py` で再現。
 - **Experiment 002（独自研究②：Position条件）** … `docs/Experiment002_Position条件_研究レポート.md`
-  Score を一切使わず「**空間情報（ステレオILD）のみ**で同一楽器を分離できるか」を Exp 001 と同一条件で検証。**+10.25 dB SI-SDR（pan±0.3）で支持**、ただし**空間分離量に強く依存**（±0.1で+1.5dB）。Score=「同音高で失敗・位置非依存」/ Position=「同位置で失敗・音高非依存」で**相補的**。`python src/run_exp002_position.py` で再現。
+  Score を一切使わず「**空間情報（ステレオILD）のみ**で同一楽器を分離できるか」を Exp 001 と同一条件で検証。**+10.25 dB SI-SDR（pan±0.3）で支持**、ただし**空間分離量に強く依存**（±0.1で+1.5dB）。`python src/run_exp002_position.py` で再現。
+- **Experiment 003（独自研究③：Score＋Position 併用）** … `docs/Experiment003_Score_Position併用_研究レポート.md`
+  4条件（音声のみ/Score/Position/併用）を最難条件（ユニゾン・近接・両方）で比較。**相補性は非対称・部分的**：Position の近接失敗は Score が補うが、**ユニゾンは Score・Position（マスキング）共通の壁**で併用でも解けない（B: 併用0.64＝両方失敗）。次段（多ch空間フィルタ/生成的手法）への指針を提示。`python src/run_exp003_combined.py` で再現。
 
 ## PoC の再現（CPU のみ・完全オフライン）
 

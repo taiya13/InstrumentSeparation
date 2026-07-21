@@ -1,0 +1,171 @@
+{
+  "hypothesis": "Score and Position complement each other's failure modes; combined is robust across both (fails only when both cues are degenerate)",
+  "config": {
+    "sep_far": 0.3,
+    "sep_near": 0.05,
+    "sigma": 0.5,
+    "n_test": 16
+  },
+  "scenarios": {
+    "A_diff_separated": {
+      "audio_only": {
+        "si_sdr": -0.01,
+        "vln1": 0.12,
+        "vln2": -0.14,
+        "sdr": 0.31,
+        "sir": 0.31,
+        "sar": 198.41
+      },
+      "score": {
+        "si_sdr": 6.95,
+        "vln1": 7.01,
+        "vln2": 6.88,
+        "sdr": 8.45,
+        "sir": 10.73,
+        "sar": 12.83
+      },
+      "position": {
+        "si_sdr": 10.36,
+        "vln1": 10.46,
+        "vln2": 10.26,
+        "sdr": 11.36,
+        "sir": 12.95,
+        "sar": 16.99
+      },
+      "score_position": {
+        "si_sdr": 10.41,
+        "vln1": 10.47,
+        "vln2": 10.34,
+        "sdr": 11.84,
+        "sir": 15.95,
+        "sar": 14.24
+      },
+      "_si_sdri": {
+        "audio_only": 0.0,
+        "score": 6.96,
+        "position": 10.37,
+        "score_position": 10.42
+      }
+    },
+    "B_unison_separated": {
+      "audio_only": {
+        "si_sdr": 0.2,
+        "vln1": 0.14,
+        "vln2": 0.26,
+        "sdr": 2.71,
+        "sir": 2.71,
+        "sar": 200.53
+      },
+      "score": {
+        "si_sdr": 0.2,
+        "vln1": 0.14,
+        "vln2": 0.26,
+        "sdr": 2.71,
+        "sir": 2.71,
+        "sar": 140.19
+      },
+      "position": {
+        "si_sdr": 0.64,
+        "vln1": 0.59,
+        "vln2": 0.7,
+        "sdr": 3.1,
+        "sir": 3.18,
+        "sar": 22.3
+      },
+      "score_position": {
+        "si_sdr": 0.64,
+        "vln1": 0.59,
+        "vln2": 0.7,
+        "sdr": 3.1,
+        "sir": 3.18,
+        "sar": 22.3
+      },
+      "_si_sdri": {
+        "audio_only": 0.0,
+        "score": 0.0,
+        "position": 0.44,
+        "score_position": 0.44
+      }
+    },
+    "C_diff_close": {
+      "audio_only": {
+        "si_sdr": 0.08,
+        "vln1": 0.29,
+        "vln2": -0.14,
+        "sdr": 0.39,
+        "sir": 0.39,
+        "sar": 198.47
+      },
+      "score": {
+        "si_sdr": 7.05,
+        "vln1": 7.16,
+        "vln2": 6.93,
+        "sdr": 8.49,
+        "sir": 10.78,
+        "sar": 12.84
+      },
+      "position": {
+        "si_sdr": 0.44,
+        "vln1": 0.65,
+        "vln2": 0.23,
+        "sdr": 0.75,
+        "sir": 0.75,
+        "sar": 45.36
+      },
+      "score_position": {
+        "si_sdr": 7.19,
+        "vln1": 7.31,
+        "vln2": 7.08,
+        "sdr": 8.63,
+        "sir": 10.94,
+        "sar": 12.94
+      },
+      "_si_sdri": {
+        "audio_only": 0.0,
+        "score": 6.97,
+        "position": 0.36,
+        "score_position": 7.11
+      }
+    },
+    "D_unison_close": {
+      "audio_only": {
+        "si_sdr": -0.44,
+        "vln1": -0.56,
+        "vln2": -0.32,
+        "sdr": 2.48,
+        "sir": 2.48,
+        "sar": 199.73
+      },
+      "score": {
+        "si_sdr": -0.44,
+        "vln1": -0.56,
+        "vln2": -0.32,
+        "sdr": 2.48,
+        "sir": 2.48,
+        "sar": 140.06
+      },
+      "position": {
+        "si_sdr": -0.39,
+        "vln1": -0.51,
+        "vln2": -0.27,
+        "sdr": 2.51,
+        "sir": 2.51,
+        "sar": 45.13
+      },
+      "score_position": {
+        "si_sdr": -0.39,
+        "vln1": -0.51,
+        "vln2": -0.27,
+        "sdr": 2.51,
+        "sir": 2.51,
+        "sar": 45.13
+      },
+      "_si_sdri": {
+        "audio_only": 0.0,
+        "score": 0.0,
+        "position": 0.05,
+        "score_position": 0.05
+      }
+    }
+  }
+}

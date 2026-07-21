@@ -22,6 +22,8 @@
   Score を一切使わず「**空間情報（ステレオILD）のみ**で同一楽器を分離できるか」を Exp 001 と同一条件で検証。**+10.25 dB SI-SDR（pan±0.3）で支持**、ただし**空間分離量に強く依存**（±0.1で+1.5dB）。`python src/run_exp002_position.py` で再現。
 - **Experiment 003（独自研究③：Score＋Position 併用）** … `docs/Experiment003_Score_Position併用_研究レポート.md`
   4条件（音声のみ/Score/Position/併用）を最難条件（ユニゾン・近接・両方）で比較。**相補性は非対称・部分的**：Position の近接失敗は Score が補うが、**ユニゾンは Score・Position（マスキング）共通の壁**で併用でも解けない（B: 併用0.64＝両方失敗）。次段（多ch空間フィルタ/生成的手法）への指針を提示。`python src/run_exp003_combined.py` で再現。
+- **研究戦略（2ch生成的分離への転換）** … `docs/研究戦略_2ch生成的分離への転換.md`
+  最終目標を「**2chステレオの市販/YouTubeクラシック音源**からの楽器分離」に確定（多ch/マイクアレイは対象外）。Exp001-003 で TFマスキングの壁（ユニゾン=同一TF占有）を確認、*Separate and Diffuse*（生成は決定論の理論上限を超える）を根拠に、**「決定論フロントエンド(RoFormer)＋Score条件付き生成的分離(拡散/Flow)」**へ転換。最新手法調査・限界克服分析・優先テーマ・3〜5年ロードマップを提示。
 
 ## PoC の再現（CPU のみ・完全オフライン）
 

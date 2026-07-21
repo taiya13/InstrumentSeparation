@@ -1,4 +1,0 @@
-Generating data pools (259 STFT frames/clip, 3.0s clips)...
-train=48 test=16 pieces
-
-== Training BASELINE (audio only, score channel zeroed) ==

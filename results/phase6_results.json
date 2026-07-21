@@ -1,0 +1,42 @@
+{
+  "hypothesis": "score conditioning enables same-instrument (Vln I/II) separation from mono",
+  "method": "analytic score-informed soft mask (torch-free, training-free)",
+  "n_test": 16,
+  "results": {
+    "audio_only_floor": {
+      "si_sdr": 0.01,
+      "si_sdri": 0.0,
+      "si_sdr_vln1": 0.11,
+      "si_sdr_vln2": -0.09,
+      "sdr": 0.29,
+      "sir": 0.29,
+      "sar": 197.76
+    },
+    "score_informed": {
+      "si_sdr": 7.0,
+      "si_sdri": 6.99,
+      "si_sdr_vln1": 7.04,
+      "si_sdr_vln2": 6.95,
+      "sdr": 8.42,
+      "sir": 10.74,
+      "sar": 12.71
+    },
+    "oracle_irm": {
+      "si_sdr": 11.35,
+      "si_sdri": 11.34,
+      "si_sdr_vln1": 11.4,
+      "si_sdr_vln2": 11.31,
+      "sdr": 12.69,
+      "sir": 17.87,
+      "sar": 14.52
+    }
+  },
+  "improvement_score_vs_audio_only": {
+    "si_sdr": 6.99,
+    "si_sdr_vln1": 6.93,
+    "si_sdr_vln2": 7.04,
+    "sdr": 8.13,
+    "sir": 10.45,
+    "sar": -185.05
+  }
+}

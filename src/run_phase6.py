@@ -32,16 +32,16 @@ try:
 except Exception:
     HAVE_MIR = False
 
-SR = 22050
-NFFT = 1024
+SR = 16000
+NFFT = 512
 HOP = 256
 FBINS = NFFT // 2 + 1
-NOTE_DUR = 0.375
-N_NOTES = 8
+NOTE_DUR = 0.3
+N_NOTES = 6
 SCALE = [69, 71, 72, 74, 76, 77, 79, 81]   # A4..A5 (C major) — narrow band => frequent overlap
 NOTE_N = int(NOTE_DUR * SR)
 CLIP_N = NOTE_N * N_NOTES
-HARMONICS = 8
+HARMONICS = 6
 DEVICE = "cpu"
 
 # number of STFT frames for a CLIP_N-length signal (center=True)
@@ -106,7 +106,7 @@ def gen_pool(n, seed):
 class ConditionedMasker(nn.Module):
     """2-ch input [log-mag mixture, score map] -> 1 sigmoid mask -> extracted target.
     The score channel is the ADDED conditioning module; the conv stack is unchanged."""
-    def __init__(self, hidden=48):
+    def __init__(self, hidden=24):
         super().__init__()
         self.register_buffer("window", torch.hann_window(NFFT))
         self.net = nn.Sequential(
@@ -198,10 +198,10 @@ def evaluate(model, pool, use_score):
     return out
 
 
-def main(steps=600, out="results/phase6_results.json"):
+def main(steps=250, out="results/phase6_results.json"):
     print(f"Generating data pools ({_T} STFT frames/clip, {CLIP_N/SR:.1f}s clips)...")
-    train_pool = gen_pool(48, seed=1)
-    test_pool = gen_pool(16, seed=999)          # held-out
+    train_pool = gen_pool(24, seed=1)
+    test_pool = gen_pool(8, seed=999)           # held-out
     print(f"train={len(train_pool)} test={len(test_pool)} pieces\n")
 
     print("== Training BASELINE (audio only, score channel zeroed) ==")

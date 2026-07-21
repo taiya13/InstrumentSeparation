@@ -41,15 +41,7 @@
       "timpani"
     ]
   },
-  "diagnostic_pairs": {
-    "same_timbre_diff_line": [
-      "violin1",
-      "violin2"
-    ],
-    "same_pitch_diff_timbre": [
-      "violin1",
-      "flute"
-    ]
-  },
+  "transpose": 0,
+  "drop": [],
   "seed": 20260720
 }

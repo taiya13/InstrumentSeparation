@@ -1,0 +1,40 @@
+# Research tool (GUI/CLI) config. Swap/add models here — the GUI never needs changing.
+# Each model is just a checkpoint path; backbone type + architecture + output targets are
+# read from the checkpoint metadata. Add a new trained model by appending an entry.
+_name: app_default
+device: auto              # auto | cuda | cpu
+
+output:
+  subfolder_per_input: true    # save stems under <output>/<inputname>/
+
+presence:
+  mode: all                    # all (output every model target) | heuristic (estimate present)
+  threshold: 0.15
+
+logging:
+  dir: logs                    # research_log.jsonl + per-run json
+
+models:
+  # --- trained checkpoints (produced by the Phase 5 pipeline: run_pipeline / run_train) ---
+  - key: roformer_15gb
+    display: "Mel-Band RoFormer (SynthSOD, 15GB tier)"
+    checkpoint: checkpoints/prod_15gb/final.pt
+  - key: roformer_baseline
+    display: "Mel-Band RoFormer (category baseline)"
+    checkpoint: checkpoints/roformer_baseline_category/final.pt
+
+  # --- untrained fallbacks for pipeline validation (no checkpoint needed) ---
+  - key: tiny_masker
+    display: "Tiny Masker (category, CPU pipeline test)"
+    backbone: tiny_masker
+    output_targets: [str, ww, br, perc]
+    sr: 22050
+    mono: true
+    model: {hidden: 48, n_fft: 1024, hop: 256}
+  - key: roformer_untrained
+    display: "Mel-Band RoFormer (untrained, pipeline test)"
+    backbone: mel_band_roformer
+    output_targets: [str, ww, br, perc]
+    sr: 22050
+    mono: true
+    model: {dim: 48, depth: 2, heads: 4, dim_head: 16, num_bands: 24, n_fft: 1024, win_length: 1024, hop: 256}

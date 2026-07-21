@@ -16,8 +16,10 @@
   実物 Mel-Band RoFormer を**無改造**で、train/valid/test を分離した合成コーパスで学習・評価（在環境ベースライン）。**論文スケール GPU config・資源見積り・データ取得/前処理**を完備。論文比較・ボトルネック分析・Phase5 優先順位。GPU/実データ CDN はサンドボックスでブロックのため論文スケール再現は GPU 箱で実施。
 - **Phase 5（GPU学習準備の完成）** … `docs/Phase5_GPU学習準備.md`
   **GPU を挿した瞬間に本番学習が始まる**状態を GPU 無しで完成。CUDA自動判定・**AMP/勾配蓄積/勾配チェックポイント/AdamW+cosine/DDP**・VRAM別本番設定4種・**ワンコマンド自動化**（データ確認→学習→推論→評価→レポート）・**実験管理**（`runs/<id>/run.json`）。全機能を CPU で動作確認済み。
-- **Phase 6（独自研究①：条件付き分離）** … `docs/Phase6_条件付き分離_研究レポート.md`
-  単一仮説「**楽譜（score）条件で同一楽器（第1/第2ヴァイオリン）をモノ分離できるか**」を検証。**音声のみ 0 dB（不可能）→ 楽譜条件 +6.99 dB SI-SDR / +10.5 dB SIR**（オラクル上限の約6割）で**仮説を支持**。Phase 1 の壁を情報追加で越えた最初の実証。`python src/run_phase6_analytic.py` で再現。
+- **Phase 6 / Experiment 001（独自研究①：Score条件）** … `docs/Phase6_条件付き分離_研究レポート.md`
+  単一仮説「**楽譜（score）条件で同一楽器（第1/第2ヴァイオリン）をモノ分離できるか**」を検証。**音声のみ 0 dB（不可能）→ 楽譜条件 +6.99 dB SI-SDR / +10.5 dB SIR**（オラクル上限の約6割）で**仮説を支持**。`python src/run_phase6_analytic.py` で再現。
+- **Experiment 002（独自研究②：Position条件）** … `docs/Experiment002_Position条件_研究レポート.md`
+  Score を一切使わず「**空間情報（ステレオILD）のみ**で同一楽器を分離できるか」を Exp 001 と同一条件で検証。**+10.25 dB SI-SDR（pan±0.3）で支持**、ただし**空間分離量に強く依存**（±0.1で+1.5dB）。Score=「同音高で失敗・位置非依存」/ Position=「同位置で失敗・音高非依存」で**相補的**。`python src/run_exp002_position.py` で再現。
 
 ## PoC の再現（CPU のみ・完全オフライン）
 

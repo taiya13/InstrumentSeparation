@@ -1,0 +1,91 @@
+{
+  "hypothesis": "Position (ILD) only enables same-instrument (Vln I/II) separation from a stereo mix, without any score",
+  "method": "analytic ILD soft mask (torch-free, training-free); constant-power panning",
+  "n_test": 16,
+  "primary_pan_separation": 0.3,
+  "sigma": 0.5,
+  "results": {
+    "audio_only_floor": {
+      "si_sdr": -0.02,
+      "si_sdri": 0.0,
+      "si_sdr_vln1": 0.12,
+      "si_sdr_vln2": -0.16,
+      "sdr": 0.3,
+      "sir": 0.3,
+      "sar": 197.81
+    },
+    "position_informed": {
+      "si_sdr": 10.23,
+      "si_sdri": 10.25,
+      "si_sdr_vln1": 10.33,
+      "si_sdr_vln2": 10.13,
+      "sdr": 11.25,
+      "sir": 12.9,
+      "sar": 16.65
+    },
+    "oracle_irm": {
+      "si_sdr": 11.11,
+      "si_sdri": 11.13,
+      "si_sdr_vln1": 11.18,
+      "si_sdr_vln2": 11.05,
+      "sdr": 12.56,
+      "sir": 17.65,
+      "sar": 14.47
+    }
+  },
+  "improvement_position_vs_audio_only": {
+    "si_sdr": 10.25,
+    "si_sdr_vln1": 10.21,
+    "si_sdr_vln2": 10.29,
+    "sdr": 10.95,
+    "sir": 12.6,
+    "sar": -181.16
+  },
+  "pan_separation_sweep": {
+    "pan_pm_0.1": {
+      "si_sdr": 1.46,
+      "si_sdri": 1.48,
+      "si_sdr_vln1": 1.6,
+      "si_sdr_vln2": 1.32,
+      "sdr": 1.78,
+      "sir": 1.79,
+      "sar": 32.98
+    },
+    "pan_pm_0.2": {
+      "si_sdr": 5.61,
+      "si_sdri": 5.63,
+      "si_sdr_vln1": 5.75,
+      "si_sdr_vln2": 5.48,
+      "sdr": 6.07,
+      "sir": 6.25,
+      "sar": 21.46
+    },
+    "pan_pm_0.3": {
+      "si_sdr": 10.23,
+      "si_sdri": 10.25,
+      "si_sdr_vln1": 10.33,
+      "si_sdr_vln2": 10.13,
+      "sdr": 11.25,
+      "sir": 12.9,
+      "sar": 16.65
+    },
+    "pan_pm_0.5": {
+      "si_sdr": 11.63,
+      "si_sdri": 11.65,
+      "si_sdr_vln1": 11.69,
+      "si_sdr_vln2": 11.56,
+      "sdr": 13.09,
+      "sir": 18.8,
+      "sar": 14.78
+    },
+    "pan_pm_0.8": {
+      "si_sdr": 10.99,
+      "si_sdri": 11.01,
+      "si_sdr_vln1": 11.05,
+      "si_sdr_vln2": 10.94,
+      "sdr": 12.5,
+      "sir": 18.73,
+      "sar": 14.09
+    }
+  }
+}

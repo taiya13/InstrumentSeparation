@@ -1,0 +1,36 @@
+# Example evaluation configuration (consumed by src/evaluation.py in batch mode, Phase 3).
+# A run scores one model's estimates over a set of manifests and aggregates by
+# instrument / category / song / dataset.
+run_name: baseline_htdemucs_on_urmp
+taxonomy: configs/taxonomy.yaml
+
+model:
+  name: htdemucs           # or mel_band_roformer, open_unmix, ...
+  estimates_naming: "<taxonomy_id>.wav"   # how estimate files are named per song
+
+data:
+  manifests:               # each manifest = one piece (schemas/manifest.schema.json)
+    - data/urmp/manifest_*.json
+  split: test
+
+metrics:
+  si_sdr: true
+  bss_eval: true           # SDR/SIR/SAR via mir_eval
+  bss_level: category      # compute bss at this level (category=fast, instrument=slow)
+  instrument_level: instrument
+  report_oracle_ceiling: true
+  presence:                # if the model also predicts a present-set
+    enabled: true
+    threshold: 0.5
+
+aggregation:
+  by: [instrument, category, song, dataset]
+  statistic: [mean, median]     # median is the MUSDB/SiSEC convention
+  compare_to:                   # optional baselines to diff against
+    - oracle_irm
+    - mixture_baseline
+
+output:
+  dir: results/eval/baseline_htdemucs_on_urmp
+  write_markdown: true
+  write_json: true

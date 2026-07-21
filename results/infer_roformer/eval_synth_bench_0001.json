@@ -1,0 +1,92 @@
+{
+  "song_id": "synth_bench_0001",
+  "dataset": "synth_bench",
+  "split": "test",
+  "estimates": "results/infer_roformer",
+  "instrument_level": "category",
+  "bss_level": "category",
+  "overall": {
+    "mean_si_sdr": -12.81,
+    "median_si_sdr": -2.44,
+    "n_sources": 4
+  },
+  "per_category": {
+    "str": {
+      "mean_si_sdr": -2.14,
+      "median_si_sdr": -2.14,
+      "n": 1
+    },
+    "ww": {
+      "mean_si_sdr": -0.8,
+      "median_si_sdr": -0.8,
+      "n": 1
+    },
+    "br": {
+      "mean_si_sdr": -2.74,
+      "median_si_sdr": -2.74,
+      "n": 1
+    },
+    "perc": {
+      "mean_si_sdr": -45.56,
+      "median_si_sdr": -45.56,
+      "n": 1
+    }
+  },
+  "per_instrument": {
+    "str": {
+      "category": "str",
+      "display": "弦楽器",
+      "mixture_baseline": -2.01,
+      "oracle_ceiling_sisdr": 4.35,
+      "si_sdr": -2.14,
+      "si_sdri": -0.13
+    },
+    "ww": {
+      "category": "ww",
+      "display": "木管楽器",
+      "mixture_baseline": -1.84,
+      "oracle_ceiling_sisdr": 5.38,
+      "si_sdr": -0.8,
+      "si_sdri": 1.04
+    },
+    "br": {
+      "category": "br",
+      "display": "金管楽器",
+      "mixture_baseline": -5.82,
+      "oracle_ceiling_sisdr": 4.75,
+      "si_sdr": -2.74,
+      "si_sdri": 3.08
+    },
+    "perc": {
+      "category": "perc",
+      "display": "打楽器",
+      "mixture_baseline": -20.57,
+      "oracle_ceiling_sisdr": 0.75,
+      "si_sdr": -45.56,
+      "si_sdri": -24.99
+    }
+  },
+  "sdr_sir_sar_by_level": {
+    "str": {
+      "sdr": -1.23,
+      "sir": -0.68,
+      "sar": 11.36
+    },
+    "ww": {
+      "sdr": 0.1,
+      "sir": 1.05,
+      "sar": 9.69
+    },
+    "br": {
+      "sdr": 0.88,
+      "sir": 2.4,
+      "sar": 8.16
+    },
+    "perc": {
+      "sdr": -21.45,
+      "sir": -17.87,
+      "sar": -1.0
+    }
+  },
+  "same_timbre_groups": {}
+}

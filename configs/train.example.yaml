@@ -1,0 +1,33 @@
+# Platform training config. Swap `model.name` to change backbone (one line).
+# available: tiny_masker | mel_band_roformer | htdemucs
+device: cpu
+mono: true
+
+model:
+  name: tiny_masker        # <- change to mel_band_roformer / htdemucs to swap models
+  hidden: 48               # tiny_masker
+  n_fft: 1024
+  hop: 256
+  # --- mel_band_roformer hyperparams (used when name: mel_band_roformer) ---
+  dim: 32
+  depth: 1
+  heads: 2
+  dim_head: 16
+  num_bands: 16
+  win_length: 512
+
+data:
+  manifests: [data/synth_orchestra/manifest.json]
+  target_level: category   # category -> [str, ww, br, perc]; later: instrument / part
+  sr: 22050
+  crop_seconds: 2.0
+  batch_size: 8
+  samples_per_epoch: 256
+
+train:
+  steps: 400
+  lr: 0.003
+  ckpt_dir: checkpoints/tiny_masker_category
+  ckpt_every: 100
+  valid_every: 100
+  log_every: 50

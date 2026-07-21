@@ -1,0 +1,19 @@
+backbones available: ['htdemucs', 'mel_band_roformer', 'tiny_masker']
+target_level=category  output_targets=['str', 'ww', 'br', 'perc']
+model 'mel_band_roformer'  params=4.233M
+/usr/lib/python3.11/contextlib.py:105: FutureWarning: `torch.backends.cuda.sdp_kernel()` is deprecated. In the future, this context manager will be removed. Please see `torch.nn.attention.sdpa_kernel()` for the new context manager, with updated signature.
+  self.gen = func(*args, **kwds)
+  step   50/400  loss=2.35177  (0.92s/step)
+  step  100/400  loss=2.10424  (0.90s/step)
+  [valid] step 100: mean SI-SDR = -9.42 dB
+  step  150/400  loss=2.15898  (0.91s/step)
+  step  200/400  loss=2.26100  (0.89s/step)
+  [valid] step 200: mean SI-SDR = -6.51 dB
+  step  250/400  loss=2.17812  (0.89s/step)
+  step  300/400  loss=2.09257  (0.88s/step)
+  [valid] step 300: mean SI-SDR = -9.48 dB
+  step  350/400  loss=2.14011  (0.88s/step)
+  step  400/400  loss=2.54684  (0.87s/step)
+  [valid] step 400: mean SI-SDR = -8.62 dB
+[train] done. final checkpoint -> checkpoints/roformer_baseline_category/final.pt
+EXIT=0

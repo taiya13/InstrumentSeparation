@@ -1,0 +1,156 @@
+{
+  "song_id": "synth_bench_0001",
+  "dataset": "synth_bench",
+  "split": "test",
+  "estimates": "oracle_irm(demo)",
+  "instrument_level": "instrument",
+  "bss_level": "category",
+  "overall": {
+    "mean_si_sdr": 1.92,
+    "median_si_sdr": 1.92,
+    "n_sources": 12
+  },
+  "per_category": {
+    "str": {
+      "mean_si_sdr": 1.68,
+      "median_si_sdr": 1.86,
+      "n": 4
+    },
+    "ww": {
+      "mean_si_sdr": 2.25,
+      "median_si_sdr": 3.49,
+      "n": 4
+    },
+    "br": {
+      "mean_si_sdr": 2.23,
+      "median_si_sdr": 1.29,
+      "n": 3
+    },
+    "perc": {
+      "mean_si_sdr": 0.62,
+      "median_si_sdr": 0.62,
+      "n": 1
+    }
+  },
+  "per_instrument": {
+    "str.cb": {
+      "category": "str",
+      "display": "コントラバス",
+      "mixture_baseline": -11.09,
+      "oracle_ceiling_sisdr": 2.55,
+      "si_sdr": 2.55,
+      "si_sdri": 13.64
+    },
+    "ww.bn": {
+      "category": "ww",
+      "display": "ファゴット",
+      "mixture_baseline": -11.18,
+      "oracle_ceiling_sisdr": -1.59,
+      "si_sdr": -1.59,
+      "si_sdri": 9.59
+    },
+    "str.vlc": {
+      "category": "str",
+      "display": "チェロ",
+      "mixture_baseline": -11.84,
+      "oracle_ceiling_sisdr": -0.46,
+      "si_sdr": -0.46,
+      "si_sdri": 11.38
+    },
+    "ww.cl": {
+      "category": "ww",
+      "display": "クラリネット",
+      "mixture_baseline": -9.33,
+      "oracle_ceiling_sisdr": 3.41,
+      "si_sdr": 3.41,
+      "si_sdri": 12.74
+    },
+    "ww.fl": {
+      "category": "ww",
+      "display": "フルート",
+      "mixture_baseline": -7.92,
+      "oracle_ceiling_sisdr": 3.61,
+      "si_sdr": 3.61,
+      "si_sdri": 11.53
+    },
+    "br.hn": {
+      "category": "br",
+      "display": "ホルン",
+      "mixture_baseline": -10.32,
+      "oracle_ceiling_sisdr": 1.29,
+      "si_sdr": 1.29,
+      "si_sdri": 11.61
+    },
+    "ww.ob": {
+      "category": "ww",
+      "display": "オーボエ",
+      "mixture_baseline": -10.25,
+      "oracle_ceiling_sisdr": 3.57,
+      "si_sdr": 3.57,
+      "si_sdri": 13.82
+    },
+    "perc.timp": {
+      "category": "perc",
+      "display": "ティンパニ",
+      "mixture_baseline": -20.57,
+      "oracle_ceiling_sisdr": 0.62,
+      "si_sdr": 0.62,
+      "si_sdri": 21.19
+    },
+    "br.tbn": {
+      "category": "br",
+      "display": "トロンボーン",
+      "mixture_baseline": -9.69,
+      "oracle_ceiling_sisdr": -0.1,
+      "si_sdr": -0.1,
+      "si_sdri": 9.59
+    },
+    "br.tpt": {
+      "category": "br",
+      "display": "トランペット",
+      "mixture_baseline": -14.5,
+      "oracle_ceiling_sisdr": 5.51,
+      "si_sdr": 5.51,
+      "si_sdri": 20.01
+    },
+    "str.vla": {
+      "category": "str",
+      "display": "ヴィオラ",
+      "mixture_baseline": -11.6,
+      "oracle_ceiling_sisdr": 1.17,
+      "si_sdr": 1.17,
+      "si_sdri": 12.77
+    },
+    "str.vln": {
+      "category": "str",
+      "display": "ヴァイオリン",
+      "mixture_baseline": -6.32,
+      "oracle_ceiling_sisdr": 3.47,
+      "si_sdr": 3.47,
+      "si_sdri": 9.79
+    }
+  },
+  "sdr_sir_sar_by_level": {
+    "str": {
+      "sdr": 4.89,
+      "sir": 6.94,
+      "sar": 9.92
+    },
+    "ww": {
+      "sdr": 5.66,
+      "sir": 8.3,
+      "sar": 9.67
+    },
+    "br": {
+      "sdr": 5.58,
+      "sir": 9.43,
+      "sar": 8.36
+    },
+    "perc": {
+      "sdr": 2.27,
+      "sir": 9.38,
+      "sar": 3.69
+    }
+  },
+  "same_timbre_groups": {}
+}

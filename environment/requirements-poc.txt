@@ -1,0 +1,13 @@
+# Phase 1 PoC — lightweight stack that runs fully OFFLINE (CPU, no model downloads).
+# Verified installed & executed in the sandbox (Python 3.11).
+# Install:  python -m venv .venv && . .venv/bin/activate && pip install -r requirements-poc.txt
+numpy==2.4.6
+scipy==1.17.1
+soundfile==0.14.0
+librosa==0.11.0
+mir_eval==0.8.2
+scikit-learn==1.9.0
+numba==0.66.0
+# torch/torchaudio are only needed for the HDemucs architecture smoke-test (CPU):
+torch==2.13.0
+torchaudio==2.11.0

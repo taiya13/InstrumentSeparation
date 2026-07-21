@@ -1,0 +1,47 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "OrchestraSeparationManifest",
+  "description": "Per-piece manifest: what instruments are present and where their ground-truth stems live. One manifest entry == one renderable/scoreable piece. Consumed by training, presence detection, and evaluation.",
+  "type": "object",
+  "required": ["song_id", "dataset", "split", "sample_rate", "mixture", "sources"],
+  "properties": {
+    "song_id":     {"type": "string", "description": "unique piece id (stable across splits)"},
+    "dataset":     {"type": "string", "description": "source corpus, e.g. synth_bench / synthsod / urmp"},
+    "split":       {"type": "string", "enum": ["train", "valid", "test"]},
+    "source_type": {"type": "string", "enum": ["synthetic", "real"]},
+    "sample_rate": {"type": "integer"},
+    "duration_sec":{"type": "number"},
+    "mixture":        {"type": "string", "description": "path to mono mixture wav"},
+    "mixture_stereo": {"type": "string", "description": "path to stereo mixture wav (optional)"},
+    "score":       {"type": "string", "description": "path to aligned MIDI/MusicXML (optional; enables score-informed separation)"},
+    "present_ids": {"type": "array", "items": {"type": "string"},
+                    "description": "taxonomy ids present in this piece (== keys of sources). Ground-truth presence label."},
+    "sources": {
+      "type": "array",
+      "description": "one entry per present source (ground-truth stem)",
+      "items": {
+        "type": "object",
+        "required": ["taxonomy_id", "stem"],
+        "properties": {
+          "taxonomy_id": {"type": "string", "description": "id from configs/taxonomy.yaml"},
+          "dataset_label":{"type": "string", "description": "original label in the source corpus"},
+          "stem":        {"type": "string", "description": "path to isolated (bleed-free) stem wav"},
+          "level":       {"type": "string", "enum": ["category", "instrument", "part"]},
+          "gain":        {"type": "number"},
+          "pan":         {"type": "number", "minimum": -1, "maximum": 1},
+          "n_players":   {"type": "integer", "description": "section size (for divisi/ensemble realism)"}
+        }
+      }
+    },
+    "provenance": {
+      "type": "object",
+      "description": "how this piece was produced (for reproducibility & domain tracking)",
+      "properties": {
+        "renderer":    {"type": "string", "description": "e.g. spitfire_bbcso / sfizz+GM / midi-ddsp / real_recording"},
+        "midi_source": {"type": "string"},
+        "reverb_ir":   {"type": "string"},
+        "augmentations": {"type": "array", "items": {"type": "string"}}
+      }
+    }
+  }
+}

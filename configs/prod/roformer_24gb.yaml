@@ -1,0 +1,41 @@
+# TIER: ~24 GB VRAM (e.g. RTX 3090 / 4090 / A5000).
+# Near-paper Mel-Band RoFormer. Data: SynthSOD (orchestra); switch splits to MUSDB for
+# the paper sanity metric (see note in roformer_15gb.yaml).
+device: cuda
+mono: false
+
+model:
+  name: mel_band_roformer
+  dim: 384
+  depth: 10
+  heads: 8
+  dim_head: 64
+  num_bands: 60
+  n_fft: 2048
+  win_length: 2048
+  hop: 441
+
+data:
+  splits: data/synthsod/splits.json
+  target_level: category
+  sr: 44100
+  crop_seconds: 6.0
+  batch_size: 2
+  samples_per_epoch: 100000
+
+train:
+  steps: 300000
+  lr: 0.0003
+  ckpt_dir: checkpoints/prod_24gb
+  ckpt_every: 5000
+  valid_every: 5000
+  log_every: 100
+  optimizer: adamw
+  weight_decay: 0.01
+  scheduler: cosine
+  warmup: 8000
+  grad_accum: 4
+  grad_clip: 0.5
+  amp: true
+  amp_dtype: bf16
+  grad_checkpointing: false

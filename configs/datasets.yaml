@@ -1,0 +1,128 @@
+# =============================================================================
+# Dataset registry — role, type, access, and taxonomy coverage.
+# Split policy is SONG-LEVEL: a given piece/performance never appears in more than
+# one split. Real recordings are reserved for valid/test (+ a small DA fine-tune slice).
+# `access.blocked_in_sandbox: true` = host is 403 under this project's egress policy;
+# acquire on an unrestricted machine (see environment/README.md).
+# =============================================================================
+version: "0.1.0"
+
+policy:
+  split_granularity: song            # never leak a piece across splits
+  balance: instrument_stratified     # keep instrument coverage across splits
+  primary_train_source: synthetic    # bleed-free stems + exact presence labels
+  eval_source: real                  # measure the domain gap explicitly
+  cross_domain_test: true            # train on synthetic, test on real
+
+datasets:
+  # ---------- SYNTHETIC (training) ----------
+  - name: synth_bench
+    type: synthetic
+    role: [diagnostic, unit_test]
+    hours: 0.003
+    content: "13-instrument controlled bench with exact stems (this repo)"
+    taxonomy_levels: [instrument, part]
+    license: project (MIT)
+    access: {host: local, blocked_in_sandbox: false}
+    notes: "Phase 1 bench; used to unit-test the whole pipeline. NOT for real training."
+
+  - name: synthsod
+    type: synthetic
+    role: [train, valid]
+    hours: 47
+    content: "Orchestra pieces from Symbolic Orchestral DB, rendered w/ Spitfire BBC SO"
+    taxonomy_levels: [category, instrument]
+    license: research (see paper/Zenodo terms)
+    access: {host: zenodo.org, id: "13759492", blocked_in_sandbox: true}
+    notes: "Best orchestral training source today; family + instrument stems."
+
+  - name: ensembleset
+    type: synthetic
+    role: [train, valid]
+    hours: 80          # approx
+    content: "Synthesised chamber ensembles, bleed-free"
+    taxonomy_levels: [instrument]
+    license: research
+    access: {host: external, blocked_in_sandbox: true}
+    notes: "Good for distinct-timbre small ensembles."
+
+  - name: cocochorales
+    type: synthetic
+    role: [train]
+    hours: 1400
+    content: "4-part chorales, 13 instruments, MIDI-DDSP rendered; stems+MIDI+f0"
+    taxonomy_levels: [instrument]
+    license: open (Magenta)
+    access: {host: magenta/gcs, blocked_in_sandbox: true}
+    notes: "Huge; great for pretraining & score-informed (aligned MIDI provided)."
+
+  - name: slakh2100
+    type: synthetic
+    role: [train]
+    hours: 145
+    content: "MIDI-rendered multitrack, 34 instrument classes"
+    taxonomy_levels: [category, instrument]
+    license: open
+    access: {host: zenodo/gcs, blocked_in_sandbox: true}
+    notes: "Broad instrument coverage (not orchestral style); useful for pretraining."
+
+  # ---------- REAL (validation / test) ----------
+  - name: urmp
+    type: real
+    role: [valid, test, da_finetune]
+    hours: 1.3
+    content: "44 chamber pieces, individual instrument tracks + video + aligned score"
+    taxonomy_levels: [instrument]
+    license: research
+    access: {host: rochester, blocked_in_sandbox: unknown}
+    notes: "De-facto real benchmark for classical separation. Reserve for eval."
+
+  - name: aalto_anechoic
+    type: real
+    role: [test]
+    hours: 0.3
+    content: "Anechoic orchestral recordings, instrument groups isolated"
+    taxonomy_levels: [category]
+    license: research
+    access: {host: aalto, blocked_in_sandbox: unknown}
+    notes: "Clean real reference for family-level eval + reverb augmentation targets."
+
+  - name: cadenza_cad2
+    type: real
+    role: [valid, test]
+    hours: 1.0        # approx challenge data
+    content: "Small classical ensembles (string quartet) for rebalancing challenge"
+    taxonomy_levels: [instrument, part]
+    license: challenge terms
+    access: {host: cadenzachallenge.org, blocked_in_sandbox: unknown}
+    notes: "Closest public benchmark to our goal (incl. same-instrument parts)."
+
+  - name: spheres
+    type: real
+    role: [test]
+    hours: null
+    content: "Multitrack real orchestral recordings for MIR"
+    taxonomy_levels: [instrument]
+    license: paper terms
+    access: {host: external, blocked_in_sandbox: unknown}
+    notes: "New real orchestral multitrack resource."
+
+  - name: bach10
+    type: real
+    role: [test]
+    hours: 0.1
+    content: "10 four-part Bach chorales, real, aligned"
+    taxonomy_levels: [instrument]
+    license: research
+    access: {host: external, blocked_in_sandbox: unknown}
+
+  # ---------- NON-ORCHESTRAL (sanity / benchmark integrity) ----------
+  - name: musdb18hq
+    type: real
+    role: [sanity]
+    hours: 10
+    content: "150 pop songs, 4 stems (vocals/drums/bass/other)"
+    taxonomy_levels: [category]
+    license: research (non-commercial)
+    access: {host: zenodo.org, blocked_in_sandbox: true}
+    notes: "Confirm the pipeline reproduces published SDR before trusting orchestral numbers."

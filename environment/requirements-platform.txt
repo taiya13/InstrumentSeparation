@@ -1,0 +1,17 @@
+# Full research-platform stack (Phase 3-5). One-step install on a GPU box.
+# On CPU (this sandbox) torch/torchaudio come from pypi (CUDA build, runs on CPU too).
+# On a GPU box, install the CUDA build matching your driver from pytorch.org first,
+# then `pip install -r environment/requirements-platform.txt`.
+torch>=2.2
+torchaudio>=2.2
+bs-roformer>=1.2.4          # real Mel-Band RoFormer / BS-RoFormer (MIT, unmodified)
+numpy
+scipy
+soundfile
+librosa
+mir_eval
+scikit-learn
+pyyaml
+jsonschema
+# optional experiment tracking (the built-in runs/ tracker works without it):
+# wandb

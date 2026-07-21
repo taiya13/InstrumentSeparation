@@ -1,0 +1,5 @@
+# Research GUI/CLI tool deps (on top of the platform stack).
+# tkinter is part of the Python standard library (bundled with the python.org Windows
+# installer). Install the platform stack first, then this file.
+-r requirements-platform.txt
+nvidia-ml-py>=12        # pynvml: GPU utilization + VRAM (optional; falls back to nvidia-smi/torch)

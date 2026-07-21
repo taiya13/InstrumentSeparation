@@ -1,0 +1,47 @@
+# =============================================================================
+# PAPER-SCALE Mel-Band RoFormer config (GPU ONLY — do NOT run on the sandbox CPU).
+# Purpose: reproduce the world-class baseline on MUSDB18-HQ (vocals/drums/bass/other),
+# i.e. the setting reported in the Mel-Band RoFormer paper (Wang et al., 2023) and the
+# ZFTurbo/community training recipes. NO custom model modifications.
+#
+# These are the *near-paper* hyperparameters. Exact paper numbers were produced with
+# large batch, bf16, multi-GPU and ~hundreds of thousands to millions of steps.
+# =============================================================================
+device: cuda
+mono: false                 # stereo
+
+model:
+  name: mel_band_roformer
+  # --- architecture (near paper / ZFTurbo "big" config) ---
+  dim: 384
+  depth: 12
+  heads: 8
+  dim_head: 64
+  num_bands: 60
+  n_fft: 2048
+  win_length: 2048
+  hop: 441                  # ~10 ms at 44.1 kHz
+  # (stereo=true is derived from mono:false)
+
+data:
+  # Real dataset adapters emit the same manifest/splits format (see scripts/prepare_*.py)
+  splits: data/musdb18hq/splits.json     # vocals/drums/bass/other
+  target_level: category                 # MUSDB stems map to category/voice ids
+  sr: 44100
+  crop_seconds: 8.0                       # ~8 s segments (paper-ish)
+  batch_size: 8                           # per-GPU; scale with GPUs / grad-accum
+  samples_per_epoch: 100000
+
+train:
+  steps: 300000                           # paper-scale needs 1e5–1e6 steps
+  lr: 0.0003
+  ckpt_dir: checkpoints/roformer_musdb_paper
+  ckpt_every: 5000
+  valid_every: 5000
+  log_every: 100
+  # Recommended (implement in Phase 5 trainer): AdamW, cosine schedule + warmup,
+  # bf16/amp, grad clip 0.5, EMA of weights, SDR-based validation early stop.
+
+# ---- Orchestral variant: same architecture, orchestral targets + data ----
+# Swap data.splits -> data/synthsod/splits.json and target_level -> instrument (or a
+# curated orchestral vocabulary). Keep the architecture identical (baseline discipline).
